@@ -25,9 +25,9 @@ Kindle 10 gen 2019 specs
 
 ## Experiências
 
-As páginas publicadas estão disponíveis em [devwz.github.io/kindle](https://devwz.github.io/kindle/):
+O [sumário das experiências](https://devwz.github.io/kindle/) está publicado em [devwz.github.io/kindle](https://devwz.github.io/kindle/):
 
-- [Cubo em movimento](https://devwz.github.io/kindle/)
+- [Dado em movimento](https://devwz.github.io/kindle/dado.html)
 - [Ateliê de pixels](https://devwz.github.io/kindle/atelie.html)
 - [Dispositivo](https://devwz.github.io/kindle/dispositivo.html)
 - [O Farol de Névoa](https://devwz.github.io/kindle/farol.html)
