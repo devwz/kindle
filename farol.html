@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=600, initial-scale=1">
+	<meta name="theme-color" content="#FFFFFF">
+	<meta name="description" content="História interativa curta, otimizada para leitura em tela Kindle.">
+	<title>O Farol de Névoa | Kindle</title>
+	<style>
+		:root {
+			color-scheme: light;
+			--paper: #FFFFFF;
+			--ink: #111111;
+			--muted: #666666;
+			--rule: #CCCCCC;
+			--soft: #EEEEEE;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			width: 100%;
+			min-height: 100%;
+			margin: 0;
+		}
+
+		body {
+			display: grid;
+			min-height: 100vh;
+			place-items: center;
+			overflow: auto;
+			background: #DDDDDD;
+			color: var(--ink);
+			font-family: Georgia, "Times New Roman", serif;
+		}
+
+		.screen {
+			display: grid;
+			grid-template-rows: 62px 1fr 50px;
+			width: min(600px, 100vw);
+			aspect-ratio: 3 / 4;
+			overflow: hidden;
+			background: var(--paper);
+			box-shadow: 8px 8px 0 #888888;
+		}
+
+		.masthead,
+		.footer {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin: 0 30px;
+		}
+
+		.masthead {
+			border-bottom: 1px solid var(--rule);
+		}
+
+		.brand {
+			font-size: 15px;
+			font-weight: bold;
+			letter-spacing: 0;
+		}
+
+		.edition,
+		.footer-label {
+			color: var(--muted);
+			font-family: "Courier New", monospace;
+			font-size: 10px;
+			letter-spacing: 0;
+		}
+
+		.story {
+			display: grid;
+			min-height: 0;
+			grid-template-rows: 28px 190px auto 1fr;
+			gap: 14px;
+			padding: 16px 30px 14px;
+		}
+
+		.scene-meta {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid var(--rule);
+			font-family: "Courier New", monospace;
+			font-size: 10px;
+			font-weight: bold;
+		}
+
+		#inventory {
+			color: var(--muted);
+			text-align: right;
+		}
+
+		.art-frame {
+			min-height: 0;
+			overflow: hidden;
+			border: 2px solid var(--ink);
+			background: var(--soft);
+			box-shadow: 4px 4px 0 #888888;
+		}
+
+		#lighthouse-art {
+			display: block;
+			width: 100%;
+			height: 100%;
+			image-rendering: pixelated;
+		}
+
+		.passage {
+			align-content: center;
+			display: grid;
+			gap: 9px;
+			padding: 6px 4px 6px 18px;
+			border-left: 3px solid var(--ink);
+		}
+
+		#scene-title {
+			margin: 0;
+			font-size: 25px;
+			font-weight: normal;
+		}
+
+		#scene-text {
+			margin: 0;
+			font-size: 17px;
+			line-height: 1.5;
+		}
+
+		.choices {
+			align-content: stretch;
+			display: grid;
+			grid-auto-rows: minmax(64px, 1fr);
+			gap: 10px;
+		}
+
+		.choice {
+			display: grid;
+			grid-template-columns: 38px 1fr 22px;
+			align-items: center;
+			gap: 12px;
+			padding: 10px 14px;
+			border: 2px solid var(--ink);
+			border-radius: 0;
+			background: var(--paper);
+			box-shadow: 3px 3px 0 #666666;
+			color: var(--ink);
+			cursor: pointer;
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 16px;
+			line-height: 1.3;
+			text-align: left;
+		}
+
+		.choice:hover,
+		.choice:focus-visible {
+			background: var(--ink);
+			color: var(--paper);
+		}
+
+		.choice:focus-visible,
+		.restart:focus-visible {
+			outline: 2px solid #666666;
+			outline-offset: 3px;
+		}
+
+		.choice-number {
+			display: grid;
+			width: 30px;
+			aspect-ratio: 1;
+			place-items: center;
+			border: 1px solid currentColor;
+			font-family: "Courier New", monospace;
+			font-size: 13px;
+		}
+
+		.choice-arrow {
+			font-family: "Courier New", monospace;
+			font-size: 18px;
+			text-align: right;
+		}
+
+		.choices[hidden] {
+			display: none;
+		}
+
+		.footer {
+			border-top: 1px solid var(--rule);
+		}
+
+		.restart {
+			padding: 8px 10px;
+			border: 1px solid var(--ink);
+			border-radius: 0;
+			background: var(--paper);
+			color: var(--ink);
+			cursor: pointer;
+			font-family: "Courier New", monospace;
+			font-size: 10px;
+		}
+
+		.restart:hover {
+			background: var(--ink);
+			color: var(--paper);
+		}
+
+		@media (max-width: 420px) {
+			.masthead,
+			.footer {
+				margin-right: 20px;
+				margin-left: 20px;
+			}
+
+			.story {
+				padding-right: 20px;
+				padding-left: 20px;
+			}
+
+			#scene-text {
+				font-size: 16px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="screen" aria-label="História interativa O Farol de Névoa">
+		<header class="masthead">
+			<div class="brand">O FAROL DE NÉVOA</div>
+			<div class="edition">FICÇÃO INTERATIVA · 06</div>
+		</header>
+
+		<section class="story" aria-label="Cena da história">
+			<div class="scene-meta">
+				<span id="chapter-label">CENA 01</span>
+				<span id="inventory">SEM OBJETOS</span>
+			</div>
+
+			<div class="art-frame">
+				<canvas id="lighthouse-art" width="240" height="86" role="img" aria-label="Farol pixelado em uma noite de neblina"></canvas>
+			</div>
+
+			<article class="passage" aria-live="polite">
+				<h1 id="scene-title"></h1>
+				<p id="scene-text"></p>
+			</article>
+
+			<div class="choices" id="choices"></div>
+		</section>
+
+		<footer class="footer">
+			<div class="footer-label">600 × 800 PX · 167 PPI · 16 TONS</div>
+			<button class="restart" id="restart" type="button">RECOMEÇAR</button>
+		</footer>
+	</main>
+
+	<script>
+		const state = {
+			hasGlass: false,
+			hasKey: false,
+			sawSignal: false,
+			step: 1
+		};
+
+		const scenes = {
+			arrival: {
+				chapter: "CENA 01 · A CHEGADA",
+				title: "A luz que faltava",
+				text: "Às 23h17, o farol se apagou. Você encontra duas pistas na neblina: um brilho na escada e pegadas que seguem até o mar.",
+				choices: [
+					{ label: "Examinar o brilho entre as pedras", next: "tower", effect: "hasGlass" },
+					{ label: "Seguir as pegadas pela areia", next: "shore", effect: "hasKey" }
+				]
+			},
+			shore: {
+				chapter: "CENA 02 · A PRAIA",
+				title: "O que a maré trouxe",
+				text: "A maré recua e deixa uma pequena chave de latão junto a uma garrafa. Ao longe, três toques de sino atravessam a névoa.",
+				choices: [
+					{ label: "Guardar a chave e voltar ao farol", next: "tower", effect: "hasKey" },
+					{ label: "Responder ao sino no cais", next: "pier", effect: "sawSignal" }
+				]
+			},
+			tower: {
+				chapter: "CENA 03 · A LANTERNA",
+				title: "No alto da torre",
+				text: "A lente está rachada. Há um encaixe vazio no mecanismo e, sob o painel, uma fechadura pequena. O mar espera por um sinal.",
+				choices: [
+					{ label: "Ajustar a lente e girar o mecanismo", next: () => state.hasGlass ? "endingLight" : "endingDim" },
+					{ label: "Abrir o painel e procurar uma solução", next: () => state.hasKey ? "endingKey" : "endingNote" }
+				]
+			},
+			pier: {
+				chapter: "CENA 04 · O CAIS",
+				title: "Três toques na noite",
+				text: "Você bate três vezes no poste do cais. Uma resposta ecoa do outro lado da baía. Uma lanterna se acende dentro de um barco.",
+				choices: [
+					{ label: "Guiar o barco com a lanterna de mão", next: "endingSignal" },
+					{ label: "Voltar à torre antes da maré subir", next: "tower" }
+				]
+			},
+			endingLight: {
+				chapter: "FIM · A LUZ",
+				title: "Uma linha no horizonte",
+				text: "O vidro se encaixa. A luz atravessa a névoa e encontra um barco perdido. Ao amanhecer, alguém deixa uma concha na porta do farol.",
+				ending: true
+			},
+			endingDim: {
+				chapter: "FIM · O FEIXE",
+				title: "Luz suficiente",
+				text: "O mecanismo gira, mas o feixe sai fraco. Ainda assim, o barco vê a torre e encontra a enseada. Nem toda luz precisa ser perfeita.",
+				ending: true
+			},
+			endingKey: {
+				chapter: "FIM · A CHAVE",
+				title: "O último registro",
+				text: "A chave abre o painel. Dentro, um diário conta que o faroleiro também seguia sinais no cais. Você acende a lanterna e espera a resposta.",
+				ending: true
+			},
+			endingNote: {
+				chapter: "FIM · A MENSAGEM",
+				title: "Do outro lado",
+				text: "Sem chave, você encontra apenas uma frase gravada na madeira: “Quando a luz falhar, escute o mar.” Três toques respondem na distância.",
+				ending: true
+			},
+			endingSignal: {
+				chapter: "FIM · O ENCONTRO",
+				title: "A margem segura",
+				text: "A lanterna do barco responde. Vocês seguem juntos pela água calma até a praia. Na manhã seguinte, o farol volta a acender.",
+				ending: true
+			}
+		};
+
+		const chapterLabel = document.querySelector("#chapter-label");
+		const inventoryLabel = document.querySelector("#inventory");
+		const title = document.querySelector("#scene-title");
+		const text = document.querySelector("#scene-text");
+		const choices = document.querySelector("#choices");
+		const canvas = document.querySelector("#lighthouse-art");
+		const context = canvas.getContext("2d");
+
+		function pixel(x, y, width, height, color) {
+			context.fillStyle = color;
+			context.fillRect(x, y, width, height);
+		}
+
+		function drawArt(sceneId) {
+			pixel(0, 0, 240, 86, "#EEEEEE");
+			for (let y = 4; y < 38; y += 5) {
+				for (let x = 5; x < 235; x += 6) {
+					if ((x + y) % 4 === 0) pixel(x, y, 1, 1, "#BBBBBB");
+				}
+			}
+
+			pixel(188, 8, 17, 7, "#FFFFFF");
+			pixel(184, 12, 25, 8, "#FFFFFF");
+			pixel(190, 18, 14, 3, "#FFFFFF");
+			pixel(198, 8, 2, 2, "#EEEEEE");
+			pixel(32, 9, 2, 2, "#666666");
+			pixel(61, 19, 2, 2, "#666666");
+			pixel(147, 7, 2, 2, "#666666");
+
+			for (let y = 25; y < 55; y += 1) {
+				const halfWidth = Math.floor((y - 25) * 2.5);
+				pixel(170 - halfWidth, y, halfWidth * 2, 1, "#DDDDDD");
+			}
+			if (sceneId === "endingDim" || sceneId === "endingNote") {
+				pixel(147, 32, 23, 2, "#BBBBBB");
+				pixel(151, 37, 19, 2, "#BBBBBB");
+			}
+
+			pixel(0, 54, 240, 32, "#999999");
+			pixel(0, 58, 240, 1, "#EEEEEE");
+			pixel(0, 66, 240, 2, "#BBBBBB");
+			pixel(0, 77, 240, 1, "#EEEEEE");
+			pixel(0, 82, 240, 1, "#666666");
+
+			pixel(10, 48, 73, 9, "#777777");
+			pixel(16, 43, 62, 8, "#888888");
+			pixel(25, 39, 43, 7, "#999999");
+			pixel(20, 54, 55, 3, "#666666");
+			pixel(40, 35, 2, 19, "#666666");
+
+			pixel(160, 47, 21, 21, "#777777");
+			pixel(164, 41, 28, 27, "#FFFFFF");
+			pixel(167, 28, 22, 38, "#FFFFFF");
+			pixel(165, 25, 26, 5, "#111111");
+			pixel(163, 30, 30, 3, "#666666");
+			pixel(164, 35, 28, 3, "#BBBBBB");
+			pixel(169, 40, 5, 5, "#111111");
+			pixel(181, 40, 5, 5, "#111111");
+			pixel(175, 43, 5, 2, "#666666");
+			pixel(173, 49, 11, 3, "#111111");
+			pixel(175, 52, 7, 11, "#666666");
+			pixel(158, 66, 28, 3, "#111111");
+			pixel(154, 69, 37, 2, "#111111");
+			pixel(148, 72, 49, 2, "#111111");
+
+			pixel(205, 56, 22, 6, "#111111");
+			pixel(210, 51, 10, 5, "#111111");
+			pixel(214, 45, 2, 11, "#666666");
+			pixel(214, 47, 2, 4, "#FFFFFF");
+			pixel(208, 63, 18, 2, "#111111");
+			pixel(7, 71, 22, 2, "#EEEEEE");
+			pixel(48, 75, 35, 2, "#EEEEEE");
+			pixel(100, 70, 25, 2, "#EEEEEE");
+			pixel(202, 76, 26, 2, "#EEEEEE");
+		}
+
+		function updateInventory() {
+			const objects = [];
+			if (state.hasGlass) objects.push("VIDRO");
+			if (state.hasKey) objects.push("CHAVE");
+			if (state.sawSignal) objects.push("SINAL");
+			inventoryLabel.textContent = objects.length ? objects.join(" · ") : "SEM OBJETOS";
+		}
+
+		function choose(option) {
+			if (option.effect) state[option.effect] = true;
+			state.step += 1;
+			const nextScene = typeof option.next === "function" ? option.next() : option.next;
+			renderScene(nextScene);
+		}
+
+		function renderScene(sceneId) {
+			const scene = scenes[sceneId];
+			chapterLabel.textContent = scene.chapter;
+			title.textContent = scene.title;
+			text.textContent = scene.text;
+			updateInventory();
+			drawArt(sceneId);
+			choices.replaceChildren();
+			choices.hidden = Boolean(scene.ending);
+
+			if (scene.choices) {
+				scene.choices.forEach((option, index) => {
+					const button = document.createElement("button");
+					button.className = "choice";
+					button.type = "button";
+					button.innerHTML = `<span class="choice-number">${index + 1}</span><span>${option.label}</span><span class="choice-arrow">›</span>`;
+					button.addEventListener("click", () => choose(option));
+					choices.append(button);
+				});
+			}
+		}
+
+		document.querySelector("#restart").addEventListener("click", () => {
+			state.hasGlass = false;
+			state.hasKey = false;
+			state.sawSignal = false;
+			state.step = 1;
+			renderScene("arrival");
+		});
+
+		renderScene("arrival");
+	</script>
+</body>
+</html>

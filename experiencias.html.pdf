@@ -1,0 +1,104 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R /Annots [7 0 R 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R 13 0 R] >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Length 1247 >>
+stream
+BT /F2 24 Tf 72 765 Td (Experi?ncias HTML) Tj ET
+BT /F1 11 Tf 72 741 Td (Selecione um t?tulo para abrir a experi?ncia correspondente.) Tj ET
+0.78 G 72 724 m 523 724 l S
+0.08 0.32 0.48 rg
+BT /F2 15 Tf 72 686 Td (Cubo em movimento) Tj ET
+0.35 g
+BT /F1 10 Tf 72 669 Td (index.html) Tj ET
+0.88 G 72 657 m 523 657 l S
+0.08 0.32 0.48 rg
+BT /F2 15 Tf 72 621 Td (Ateli? de pixels) Tj ET
+0.35 g
+BT /F1 10 Tf 72 604 Td (atelie.html) Tj ET
+0.88 G 72 592 m 523 592 l S
+0.08 0.32 0.48 rg
+BT /F2 15 Tf 72 556 Td (Dispositivo) Tj ET
+0.35 g
+BT /F1 10 Tf 72 539 Td (dispositivo.html) Tj ET
+0.88 G 72 527 m 523 527 l S
+0.08 0.32 0.48 rg
+BT /F2 15 Tf 72 491 Td (O Farol de N?voa) Tj ET
+0.35 g
+BT /F1 10 Tf 72 474 Td (farol.html) Tj ET
+0.88 G 72 462 m 523 462 l S
+0.08 0.32 0.48 rg
+BT /F2 15 Tf 72 426 Td (Noite de ramen) Tj ET
+0.35 g
+BT /F1 10 Tf 72 409 Td (jogo.html) Tj ET
+0.88 G 72 397 m 523 397 l S
+0.08 0.32 0.48 rg
+BT /F2 15 Tf 72 361 Td (Roleta de cinzas) Tj ET
+0.35 g
+BT /F1 10 Tf 72 344 Td (roleta.html) Tj ET
+0.88 G 72 332 m 523 332 l S
+0.08 0.32 0.48 rg
+BT /F2 15 Tf 72 296 Td (Jardim lunar em WebGL) Tj ET
+0.35 g
+BT /F1 10 Tf 72 279 Td (webgl.html) Tj ET
+0.88 G 72 267 m 523 267 l S
+0.35 g
+BT /F1 9 Tf 72 220 Td (Links relativos ? pasta deste PDF.) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Annot /Subtype /Link /Rect [72 664 523 704] /Border [0 0 0] /A << /S /URI /URI (index.html) >> >>
+endobj
+8 0 obj
+<< /Type /Annot /Subtype /Link /Rect [72 599 523 639] /Border [0 0 0] /A << /S /URI /URI (atelie.html) >> >>
+endobj
+9 0 obj
+<< /Type /Annot /Subtype /Link /Rect [72 534 523 574] /Border [0 0 0] /A << /S /URI /URI (dispositivo.html) >> >>
+endobj
+10 0 obj
+<< /Type /Annot /Subtype /Link /Rect [72 469 523 509] /Border [0 0 0] /A << /S /URI /URI (farol.html) >> >>
+endobj
+11 0 obj
+<< /Type /Annot /Subtype /Link /Rect [72 404 523 444] /Border [0 0 0] /A << /S /URI /URI (jogo.html) >> >>
+endobj
+12 0 obj
+<< /Type /Annot /Subtype /Link /Rect [72 339 523 379] /Border [0 0 0] /A << /S /URI /URI (roleta.html) >> >>
+endobj
+13 0 obj
+<< /Type /Annot /Subtype /Link /Rect [72 274 523 314] /Border [0 0 0] /A << /S /URI /URI (webgl.html) >> >>
+endobj
+xref
+0 14
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000313 00000 n 
+0000000410 00000 n 
+0000000512 00000 n 
+0000001811 00000 n 
+0000001934 00000 n 
+0000002058 00000 n 
+0000002187 00000 n 
+0000002311 00000 n 
+0000002434 00000 n 
+0000002559 00000 n 
+trailer
+<< /Size 14 /Root 1 0 R >>
+startxref
+2683
+%%EOF

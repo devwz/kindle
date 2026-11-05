@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=600, initial-scale=1">
+	<meta name="theme-color" content="#FFFFFF">
+	<meta name="description" content="Diagnóstico local das informações de tela e navegador disponíveis para esta página.">
+	<title>Dispositivo | Kindle</title>
+	<style>
+		:root {
+			color-scheme: light;
+			--paper: #FFFFFF;
+			--ink: #111111;
+			--muted: #666666;
+			--rule: #CCCCCC;
+			--soft: #EEEEEE;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			width: 100%;
+			min-height: 100%;
+			margin: 0;
+		}
+
+		body {
+			display: grid;
+			min-height: 100vh;
+			place-items: center;
+			overflow: auto;
+			background: #DDDDDD;
+			color: var(--ink);
+			font-family: "Courier New", monospace;
+		}
+
+		.screen {
+			display: grid;
+			grid-template-rows: 62px 1fr 48px;
+			width: min(600px, 100vw);
+			aspect-ratio: 3 / 4;
+			overflow: hidden;
+			background: var(--paper);
+			box-shadow: 8px 8px 0 #888888;
+		}
+
+		.masthead,
+		.footer {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin: 0 28px;
+		}
+
+		.masthead {
+			border-bottom: 2px solid var(--ink);
+		}
+
+		.brand {
+			font-size: 15px;
+			font-weight: bold;
+			letter-spacing: 0;
+		}
+
+		.edition,
+		.footer-label {
+			color: var(--muted);
+			font-size: 10px;
+			letter-spacing: 0;
+		}
+
+		.dashboard {
+			display: grid;
+			min-height: 0;
+			grid-template-rows: auto 112px 1fr auto;
+			gap: 14px;
+			padding: 20px 28px 14px;
+		}
+
+		.intro {
+			display: flex;
+			align-items: end;
+			justify-content: space-between;
+			gap: 16px;
+		}
+
+		.intro h1 {
+			margin: 0;
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 27px;
+			font-weight: normal;
+		}
+
+		.intro p {
+			max-width: 235px;
+			margin: 0;
+			color: var(--muted);
+			font-size: 10px;
+			line-height: 1.5;
+			text-align: right;
+		}
+
+		.display-panel {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			align-items: center;
+			padding: 16px 20px;
+			border: 2px solid var(--ink);
+			background: var(--ink);
+			color: var(--paper);
+			box-shadow: 4px 4px 0 #888888;
+		}
+
+		.display-label {
+			grid-column: 1 / -1;
+			color: #CCCCCC;
+			font-size: 10px;
+			font-weight: bold;
+		}
+
+		.display-size {
+			font-size: 32px;
+			font-weight: bold;
+			white-space: nowrap;
+		}
+
+		.display-unit {
+			align-self: end;
+			padding-bottom: 5px;
+			color: #EEEEEE;
+			font-size: 11px;
+			text-align: right;
+		}
+
+		.info-grid {
+			display: grid;
+			min-height: 0;
+			grid-template-columns: 1fr 1fr;
+			grid-template-rows: repeat(5, 1fr);
+			column-gap: 24px;
+		}
+
+		.info-row {
+			display: grid;
+			min-width: 0;
+			grid-template-columns: 1fr auto;
+			align-items: center;
+			gap: 8px;
+			border-bottom: 1px solid var(--rule);
+		}
+
+		.info-label {
+			color: var(--muted);
+			font-size: 10px;
+			font-weight: bold;
+		}
+
+		.info-value {
+			max-width: 190px;
+			overflow-wrap: anywhere;
+			font-size: 12px;
+			font-weight: bold;
+			text-align: right;
+		}
+
+		.notice {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 14px;
+			padding: 10px 12px;
+			border-left: 4px solid var(--ink);
+			background: var(--soft);
+			font-size: 10px;
+			line-height: 1.45;
+		}
+
+		.notice strong {
+			white-space: nowrap;
+		}
+
+		.footer {
+			border-top: 1px solid var(--rule);
+		}
+
+		@media (max-width: 420px) {
+			.masthead,
+			.footer {
+				margin-right: 20px;
+				margin-left: 20px;
+			}
+
+			.dashboard {
+				padding-right: 20px;
+				padding-left: 20px;
+			}
+
+			.intro h1 {
+				font-size: 23px;
+			}
+
+			.info-grid {
+				column-gap: 14px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="screen" aria-label="Informações do dispositivo">
+		<header class="masthead">
+			<div class="brand">DEVICE / 04</div>
+			<div class="edition">LEITURA LOCAL · <span id="refresh-time">--:--:--</span></div>
+		</header>
+
+		<section class="dashboard">
+			<div class="intro">
+				<h1>Esta tela, agora.</h1>
+				<p>Dados disponibilizados pelo navegador neste dispositivo.</p>
+			</div>
+
+			<div class="display-panel" aria-label="Resolução detectada">
+				<div class="display-label">TELA REPORTADA PELO DISPOSITIVO</div>
+				<div class="display-size" id="screen-size">-- × --</div>
+				<div class="display-unit">pixels CSS<br>screen.width × screen.height</div>
+			</div>
+
+			<div class="info-grid" aria-label="Detalhes do ambiente">
+				<div class="info-row"><span class="info-label">JANELA DA PÁGINA</span><span class="info-value" id="viewport-size">--</span></div>
+				<div class="info-row"><span class="info-label">PIXEL RATIO</span><span class="info-value" id="pixel-ratio">--</span></div>
+				<div class="info-row"><span class="info-label">NAVEGADOR</span><span class="info-value" id="browser-name">--</span></div>
+				<div class="info-row"><span class="info-label">PLATAFORMA</span><span class="info-value" id="platform">--</span></div>
+				<div class="info-row"><span class="info-label">IDIOMA</span><span class="info-value" id="language">--</span></div>
+				<div class="info-row"><span class="info-label">TOQUES SUPORTADOS</span><span class="info-value" id="touch-points">--</span></div>
+				<div class="info-row"><span class="info-label">PROFUNDIDADE DE COR</span><span class="info-value" id="color-depth">--</span></div>
+				<div class="info-row"><span class="info-label">NÚCLEOS REPORTADOS</span><span class="info-value" id="cpu-cores">--</span></div>
+				<div class="info-row"><span class="info-label">MEMÓRIA DISPONÍVEL</span><span class="info-value" id="device-memory">--</span></div>
+				<div class="info-row"><span class="info-label">FUSO HORÁRIO</span><span class="info-value" id="timezone">--</span></div>
+			</div>
+
+			<div class="notice">
+				<span>PPI físico não é informado pelas APIs do navegador. A referência desta demonstração é 167 PPI.</span>
+				<strong>16 TONS</strong>
+			</div>
+		</section>
+
+		<footer class="footer">
+			<div class="footer-label">ALVO KINDLE · 600 × 800 PX</div>
+			<div class="footer-label">ATUALIZAÇÃO A CADA 1 S</div>
+		</footer>
+	</main>
+
+	<script>
+		const fields = {
+			screen: document.querySelector("#screen-size"),
+			viewport: document.querySelector("#viewport-size"),
+			ratio: document.querySelector("#pixel-ratio"),
+			browser: document.querySelector("#browser-name"),
+			platform: document.querySelector("#platform"),
+			language: document.querySelector("#language"),
+			touch: document.querySelector("#touch-points"),
+			depth: document.querySelector("#color-depth"),
+			cores: document.querySelector("#cpu-cores"),
+			memory: document.querySelector("#device-memory"),
+			timezone: document.querySelector("#timezone"),
+			updated: document.querySelector("#refresh-time")
+		};
+
+		function getBrowserName() {
+			const userAgent = navigator.userAgent;
+			const browsers = [
+				[/Edg\/([\d.]+)/, "Microsoft Edge"],
+				[/OPR\/([\d.]+)/, "Opera"],
+				[/Firefox\/([\d.]+)/, "Firefox"],
+				[/Chrome\/([\d.]+)/, "Chrome"],
+				[/Version\/([\d.]+).*Safari/, "Safari"]
+			];
+
+			for (const [pattern, name] of browsers) {
+				const match = userAgent.match(pattern);
+				if (match) return `${name} ${match[1].split(".")[0]}`;
+			}
+			return "Não identificado";
+		}
+
+		function getPlatform() {
+			const platform = navigator.userAgentData?.platform || navigator.platform || "";
+			const platforms = {
+				Win32: "Windows",
+				Win64: "Windows",
+				MacIntel: "macOS"
+			};
+			return platforms[platform] || platform || "Não informado";
+		}
+
+		function renderDeviceInfo() {
+			fields.screen.textContent = `${screen.width} × ${screen.height}`;
+			fields.viewport.textContent = `${innerWidth} × ${innerHeight} CSS px`;
+			fields.ratio.textContent = `${devicePixelRatio || 1}×`;
+			fields.browser.textContent = getBrowserName();
+			fields.platform.textContent = getPlatform();
+			fields.language.textContent = navigator.language || "Não informado";
+			fields.touch.textContent = String(navigator.maxTouchPoints ?? 0);
+			fields.depth.textContent = `${screen.colorDepth || "?"} bits`;
+			fields.cores.textContent = navigator.hardwareConcurrency
+				? String(navigator.hardwareConcurrency)
+				: "Não informado";
+			fields.memory.textContent = navigator.deviceMemory
+				? `${navigator.deviceMemory} GB`
+				: "Não exposta";
+			fields.timezone.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || "Não informada";
+			fields.updated.textContent = new Intl.DateTimeFormat("pt-BR", {
+				hour: "2-digit",
+				minute: "2-digit",
+				second: "2-digit"
+			}).format(new Date());
+		}
+
+		renderDeviceInfo();
+		window.setInterval(renderDeviceInfo, 1000);
+	</script>
+</body>
+</html>

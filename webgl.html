@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=600, initial-scale=1">
+	<meta name="theme-color" content="#FFFFFF">
+	<meta name="description" content="Jardim lunar tridimensional em WebGL, com atualizações a cada segundo e 16 tons de cinza.">
+	<title>Jardim lunar | Kindle</title>
+	<style>
+		:root {
+			color-scheme: light;
+			--paper: #FFFFFF;
+			--ink: #111111;
+			--muted: #666666;
+			--rule: #CCCCCC;
+			--soft: #EEEEEE;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			width: 100%;
+			min-height: 100%;
+			margin: 0;
+		}
+
+		body {
+			display: grid;
+			min-height: 100vh;
+			place-items: center;
+			overflow: auto;
+			background: #DDDDDD;
+			color: var(--ink);
+			font-family: Georgia, "Times New Roman", serif;
+		}
+
+		.screen {
+			display: grid;
+			grid-template-rows: 68px 1fr 66px;
+			width: min(600px, 100vw);
+			aspect-ratio: 3 / 4;
+			overflow: hidden;
+			background: var(--paper);
+			box-shadow: 8px 8px 0 #888888;
+		}
+
+		.masthead,
+		.footer {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin: 0 34px;
+		}
+
+		.masthead {
+			border-bottom: 1px solid var(--rule);
+		}
+
+		.brand {
+			font-size: 15px;
+			font-weight: bold;
+		}
+
+		.edition,
+		.footer-label,
+		.scene-meta {
+			color: var(--muted);
+			font-family: "Courier New", monospace;
+			font-size: 10px;
+		}
+
+		.stage {
+			display: grid;
+			min-height: 0;
+			grid-template-rows: 36px minmax(0, 1fr) 42px;
+			gap: 12px;
+			padding: 18px 28px 14px;
+		}
+
+		.scene-meta {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid var(--rule);
+			font-weight: bold;
+		}
+
+		#orbit-label {
+			text-align: right;
+		}
+
+		.art-frame {
+			position: relative;
+			display: grid;
+			min-height: 0;
+			place-items: center;
+			overflow: hidden;
+			border: 2px solid var(--ink);
+			background: #EEEEEE;
+			box-shadow: 4px 4px 0 #888888;
+		}
+
+		#garden {
+			display: block;
+			width: 100%;
+			height: 100%;
+		}
+
+		#error {
+			position: absolute;
+			max-width: 80%;
+			padding: 12px;
+			border: 1px solid var(--ink);
+			background: var(--paper);
+			font: 13px/1.5 "Courier New", monospace;
+			text-align: center;
+		}
+
+		#error[hidden] {
+			display: none;
+		}
+
+		.controls {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 10px;
+		}
+
+		.caption {
+			color: var(--muted);
+			font-family: "Courier New", monospace;
+			font-size: 10px;
+		}
+
+		.footer {
+			border-top: 1px solid var(--rule);
+		}
+
+		.footer-label {
+			line-height: 1.8;
+		}
+
+		.button {
+			min-width: 112px;
+			padding: 9px 10px;
+			border: 1px solid var(--ink);
+			border-radius: 0;
+			background: var(--paper);
+			color: var(--ink);
+			cursor: pointer;
+			font: 10px "Courier New", monospace;
+		}
+
+		.button:hover,
+		.button:focus-visible {
+			background: var(--ink);
+			color: var(--paper);
+		}
+
+		.button:focus-visible {
+			outline: 2px solid #666666;
+			outline-offset: 3px;
+		}
+
+		@media (max-width: 420px) {
+			.screen {
+				grid-template-rows: 60px 1fr 58px;
+			}
+
+			.masthead,
+			.footer {
+				margin-right: 20px;
+				margin-left: 20px;
+			}
+
+			.stage {
+				padding-right: 18px;
+				padding-left: 18px;
+			}
+
+			.button {
+				min-width: 96px;
+				padding-right: 6px;
+				padding-left: 6px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="screen" aria-label="Jardim lunar em WebGL">
+		<header class="masthead">
+			<div class="brand">ESTUDO Nº 07</div>
+			<div class="edition">JARDIM LUNAR · WEBGL</div>
+		</header>
+
+		<section class="stage" aria-label="Cena tridimensional interativa">
+			<div class="scene-meta">
+				<span>ESTUFA ORBITAL</span>
+				<span id="orbit-label" aria-live="polite">ÓRBITA 01 · MARÉ</span>
+			</div>
+			<div class="art-frame">
+				<canvas id="garden" width="544" height="510" aria-label="Planeta facetado, luas e anel em 3D"></canvas>
+				<p id="error" role="alert" hidden></p>
+			</div>
+			<div class="controls">
+				<span class="caption">TOQUE PARA MUDAR A ÓRBITA</span>
+				<button class="button" id="orbit" type="button">NOVA ÓRBITA</button>
+			</div>
+		</section>
+
+		<footer class="footer">
+			<div class="footer-label">600 × 800 PX · 16 TONS<br>WEBGL · 1 ATUALIZAÇÃO/S</div>
+			<button class="button" id="toggle" type="button" aria-pressed="false">PAUSAR</button>
+		</footer>
+	</main>
+
+	<script>
+		const canvas = document.querySelector("#garden");
+		const orbitButton = document.querySelector("#orbit");
+		const toggleButton = document.querySelector("#toggle");
+		const orbitLabel = document.querySelector("#orbit-label");
+		const errorMessage = document.querySelector("#error");
+		const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+		const shades = [
+			"#FFFFFF", "#EEEEEE", "#DDDDDD", "#CCCCCC",
+			"#BBBBBB", "#AAAAAA", "#999999", "#888888",
+			"#777777", "#666666", "#555555", "#444444",
+			"#333333", "#222222", "#111111", "#000000"
+		];
+
+		const gl = canvas.getContext("webgl", {
+			antialias: false,
+			alpha: false,
+			depth: true,
+			preserveDrawingBuffer: true
+		});
+
+		let orbit = 0;
+		let rotation = 0;
+		let timer;
+		let sphere;
+		let rings;
+		let positionLocation;
+		let colorLocation;
+		let matrixLocation;
+
+		function showError(message) {
+			errorMessage.textContent = message;
+			errorMessage.hidden = false;
+		}
+
+		function compileShader(type, source) {
+			const shader = gl.createShader(type);
+			if (!shader) {
+				throw new Error("Não foi possível criar um shader WebGL.");
+			}
+			gl.shaderSource(shader, source);
+			gl.compileShader(shader);
+			if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+				const message = gl.getShaderInfoLog(shader) || "Erro desconhecido no shader.";
+				gl.deleteShader(shader);
+				throw new Error(message);
+			}
+			return shader;
+		}
+
+		function createProgram() {
+			const vertexShader = compileShader(gl.VERTEX_SHADER, `
+				attribute vec3 a_position;
+				attribute vec3 a_color;
+				uniform mat4 u_matrix;
+				varying vec3 v_color;
+				void main() {
+					gl_Position = u_matrix * vec4(a_position, 1.0);
+					v_color = a_color;
+				}
+			`);
+			const fragmentShader = compileShader(gl.FRAGMENT_SHADER, `
+				precision mediump float;
+				varying vec3 v_color;
+				void main() {
+					gl_FragColor = vec4(v_color, 1.0);
+				}
+			`);
+			const program = gl.createProgram();
+			if (!program) {
+				throw new Error("Não foi possível criar o programa WebGL.");
+			}
+			gl.attachShader(program, vertexShader);
+			gl.attachShader(program, fragmentShader);
+			gl.linkProgram(program);
+			gl.deleteShader(vertexShader);
+			gl.deleteShader(fragmentShader);
+			if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+				const message = gl.getProgramInfoLog(program) || "Não foi possível vincular o programa WebGL.";
+				gl.deleteProgram(program);
+				throw new Error(message);
+			}
+			return program;
+		}
+
+		function shadeColor(index) {
+			const hex = shades[index].slice(1);
+			const value = Number.parseInt(hex, 16) / 0xFFFFFF;
+			return [value, value, value];
+		}
+
+		function sphereGeometry(latitudeBands, longitudeBands) {
+			const positions = [];
+			const colors = [];
+			for (let lat = 0; lat < latitudeBands; lat++) {
+				const theta1 = lat * Math.PI / latitudeBands;
+				const theta2 = (lat + 1) * Math.PI / latitudeBands;
+				for (let lon = 0; lon < longitudeBands; lon++) {
+					const phi1 = lon * Math.PI * 2 / longitudeBands;
+					const phi2 = (lon + 1) * Math.PI * 2 / longitudeBands;
+					const point = (theta, phi) => [
+						Math.sin(theta) * Math.cos(phi),
+						Math.cos(theta),
+						Math.sin(theta) * Math.sin(phi)
+					];
+					const a = point(theta1, phi1);
+					const b = point(theta2, phi1);
+					const c = point(theta2, phi2);
+					const d = point(theta1, phi2);
+					for (const triangle of [[a, b, d], [b, c, d]]) {
+						const normal = triangle[0].map((value, axis) =>
+							triangle.reduce((sum, vertex) => sum + vertex[axis], 0) / 3
+						);
+						const normalLength = Math.hypot(...normal);
+						const light = [-0.45, 0.65, 0.75];
+						const lightLength = Math.hypot(...light);
+						const brightness = normal.reduce(
+							(sum, value, axis) => sum + value / normalLength * light[axis] / lightLength,
+							0
+						);
+						const paletteIndex = Math.round(4 + (brightness + 1) * 4);
+						for (const vertex of triangle) {
+							positions.push(...vertex);
+							colors.push(...shadeColor(paletteIndex));
+						}
+					}
+				}
+			}
+			return { positions, colors };
+		}
+
+		function ringGeometry(segments, innerRadius, outerRadius) {
+			const positions = [];
+			const colors = [];
+			for (let i = 0; i < segments; i++) {
+				const a = i * Math.PI * 2 / segments;
+				const b = (i + 1) * Math.PI * 2 / segments;
+				const innerA = [Math.cos(a) * innerRadius, 0, Math.sin(a) * innerRadius];
+				const outerA = [Math.cos(a) * outerRadius, 0, Math.sin(a) * outerRadius];
+				const innerB = [Math.cos(b) * innerRadius, 0, Math.sin(b) * innerRadius];
+				const outerB = [Math.cos(b) * outerRadius, 0, Math.sin(b) * outerRadius];
+				const color = shadeColor(6 + Math.round((Math.cos((a + b) / 2 - 0.7) + 1) * 3));
+				for (const vertex of [innerA, outerA, innerB, innerB, outerA, outerB]) {
+					positions.push(...vertex);
+					colors.push(...color);
+				}
+			}
+			return { positions, colors };
+		}
+
+		function createMesh(geometry) {
+			const positionBuffer = gl.createBuffer();
+			const colorBuffer = gl.createBuffer();
+			if (!positionBuffer || !colorBuffer) {
+				throw new Error("Não foi possível criar a geometria WebGL.");
+			}
+			gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(geometry.positions), gl.STATIC_DRAW);
+			gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(geometry.colors), gl.STATIC_DRAW);
+			return { positionBuffer, colorBuffer, count: geometry.positions.length / 3 };
+		}
+
+		function perspective(fieldOfView, aspect, near, far) {
+			const f = 1 / Math.tan(fieldOfView / 2);
+			const range = 1 / (near - far);
+			return new Float32Array([
+				f / aspect, 0, 0, 0,
+				0, f, 0, 0,
+				0, 0, (near + far) * range, -1,
+				0, 0, near * far * range * 2, 0
+			]);
+		}
+
+		function multiply(a, b) {
+			const result = new Float32Array(16);
+			for (let column = 0; column < 4; column++) {
+				for (let row = 0; row < 4; row++) {
+					result[column * 4 + row] =
+						a[row] * b[column * 4] +
+						a[4 + row] * b[column * 4 + 1] +
+						a[8 + row] * b[column * 4 + 2] +
+						a[12 + row] * b[column * 4 + 3];
+				}
+			}
+			return result;
+		}
+
+		function translation(x, y, z) {
+			return new Float32Array([
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				x, y, z, 1
+			]);
+		}
+
+		function scaling(x, y, z) {
+			return new Float32Array([
+				x, 0, 0, 0,
+				0, y, 0, 0,
+				0, 0, z, 0,
+				0, 0, 0, 1
+			]);
+		}
+
+		function rotationY(angle) {
+			const cosine = Math.cos(angle);
+			const sine = Math.sin(angle);
+			return new Float32Array([
+				cosine, 0, -sine, 0,
+				0, 1, 0, 0,
+				sine, 0, cosine, 0,
+				0, 0, 0, 1
+			]);
+		}
+
+		function rotationX(angle) {
+			const cosine = Math.cos(angle);
+			const sine = Math.sin(angle);
+			return new Float32Array([
+				1, 0, 0, 0,
+				0, cosine, sine, 0,
+				0, -sine, cosine, 0,
+				0, 0, 0, 1
+			]);
+		}
+
+		function drawMesh(mesh, matrix) {
+			gl.bindBuffer(gl.ARRAY_BUFFER, mesh.positionBuffer);
+			gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
+			gl.bindBuffer(gl.ARRAY_BUFFER, mesh.colorBuffer);
+			gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
+			gl.uniformMatrix4fv(matrixLocation, false, matrix);
+			gl.drawArrays(gl.TRIANGLES, 0, mesh.count);
+		}
+
+		function drawScene() {
+			if (!gl) {
+				return;
+			}
+			gl.viewport(0, 0, canvas.width, canvas.height);
+			gl.clearColor(...shadeColor(1), 1);
+			gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+			const projection = perspective(Math.PI / 3.2, canvas.width / canvas.height, 0.1, 30);
+			const view = translation(0, 0, -5.2);
+			const camera = multiply(projection, view);
+			const tilt = rotationX(-0.3 + orbit * 0.08);
+			const turn = rotationY(rotation);
+			const planet = multiply(multiply(multiply(camera, tilt), turn), scaling(1.05, 1.05, 1.05));
+			drawMesh(sphere, planet);
+			const ring = multiply(multiply(multiply(multiply(camera, tilt), turn), rotationX(0.42)), scaling(1.32, 1.32, 1.32));
+			drawMesh(rings, ring);
+			const moonAngle = rotation * 1.7 + orbit * Math.PI / 4;
+			const moonPosition = translation(Math.cos(moonAngle) * 1.8, Math.sin(moonAngle) * 0.55, Math.sin(moonAngle) * 0.8);
+			const moon = multiply(multiply(multiply(multiply(camera, tilt), moonPosition), rotationY(-rotation)), scaling(0.25, 0.25, 0.25));
+			drawMesh(sphere, moon);
+		}
+
+		function updateOrbit() {
+			orbit = (orbit + 1) % 8;
+			orbitLabel.textContent = `ÓRBITA ${String(orbit + 1).padStart(2, "0")} · ${["MARÉ", "ECLIPSE", "ALVORADA", "PERIÉLIO", "CREPÚSCULO", "SIZÍGIA", "APOGEU", "NOITE"][orbit]}`;
+			if (!timer || reducedMotion.matches) {
+				drawScene();
+			}
+		}
+
+		function advanceScene() {
+			rotation += 0.12;
+			drawScene();
+		}
+
+		function startAnimation() {
+			if (!reducedMotion.matches && !timer && gl) {
+				timer = window.setInterval(advanceScene, 1000);
+			}
+		}
+
+		function stopAnimation() {
+			window.clearInterval(timer);
+			timer = undefined;
+		}
+
+		orbitButton.addEventListener("click", updateOrbit);
+		canvas.addEventListener("click", updateOrbit);
+		toggleButton.addEventListener("click", () => {
+			const isPaused = toggleButton.getAttribute("aria-pressed") === "true";
+			toggleButton.setAttribute("aria-pressed", String(!isPaused));
+			toggleButton.textContent = isPaused ? "PAUSAR" : "RETOMAR";
+			if (isPaused) {
+				startAnimation();
+			} else {
+				stopAnimation();
+			}
+		});
+		reducedMotion.addEventListener("change", () => {
+			if (reducedMotion.matches) {
+				stopAnimation();
+			} else if (toggleButton.getAttribute("aria-pressed") !== "true") {
+				startAnimation();
+			}
+		});
+
+		if (!gl) {
+			showError("Este navegador não disponibiliza WebGL. Abra a experiência em um navegador com suporte a WebGL.");
+		} else {
+			try {
+				const program = createProgram();
+				positionLocation = gl.getAttribLocation(program, "a_position");
+				colorLocation = gl.getAttribLocation(program, "a_color");
+				matrixLocation = gl.getUniformLocation(program, "u_matrix");
+				if (positionLocation < 0 || colorLocation < 0 || !matrixLocation) {
+					throw new Error("O navegador não conseguiu preparar os atributos da cena WebGL.");
+				}
+				gl.useProgram(program);
+				gl.enableVertexAttribArray(positionLocation);
+				gl.enableVertexAttribArray(colorLocation);
+				gl.enable(gl.DEPTH_TEST);
+				gl.disable(gl.DITHER);
+				gl.clearColor(...shadeColor(1), 1);
+				sphere = createMesh(sphereGeometry(12, 20));
+				rings = createMesh(ringGeometry(48, 1.25, 1.48));
+				drawScene();
+				startAnimation();
+			} catch (error) {
+				stopAnimation();
+				showError(`Não foi possível iniciar a cena WebGL: ${error.message}`);
+			}
+		}
+	</script>
+</body>
+</html>

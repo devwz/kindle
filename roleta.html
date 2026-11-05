@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=600, initial-scale=1">
+	<meta name="theme-color" content="#FFFFFF">
+	<meta name="description" content="Roleta com 16 setores, um para cada tom de cinza da tela Kindle 600 por 800 pixels.">
+	<title>Roleta de cinzas | Kindle</title>
+	<style>
+		:root {
+			color-scheme: light;
+			--paper: #FFFFFF;
+			--ink: #111111;
+			--muted: #666666;
+			--rule: #CCCCCC;
+			--soft: #EEEEEE;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			width: 100%;
+			min-height: 100%;
+			margin: 0;
+		}
+
+		body {
+			display: grid;
+			min-height: 100vh;
+			place-items: center;
+			overflow: auto;
+			background: #DDDDDD;
+			color: var(--ink);
+			font-family: Georgia, "Times New Roman", serif;
+		}
+
+		.screen {
+			position: relative;
+			display: grid;
+			grid-template-rows: 76px 1fr 76px;
+			width: min(600px, 100vw);
+			aspect-ratio: 3 / 4;
+			overflow: hidden;
+			background: var(--paper);
+			box-shadow: 8px 8px 0 #888888;
+		}
+
+		.masthead,
+		.footer {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin: 0 42px;
+		}
+
+		.masthead {
+			border-bottom: 1px solid var(--rule);
+		}
+
+		.brand {
+			font-size: 15px;
+			font-weight: bold;
+			letter-spacing: 0;
+		}
+
+		.edition,
+		.footer-label {
+			color: var(--muted);
+			font-family: "Courier New", monospace;
+			font-size: 11px;
+			letter-spacing: 0;
+		}
+
+		.scene {
+			display: grid;
+			position: relative;
+			place-items: center;
+			overflow: hidden;
+		}
+
+		.scene::before,
+		.scene::after {
+			position: absolute;
+			left: 50%;
+			width: 250px;
+			height: 1px;
+			background: var(--soft);
+			content: "";
+			transform: translateX(-50%);
+		}
+
+		.scene::before {
+			top: 24%;
+		}
+
+		.scene::after {
+			bottom: 24%;
+		}
+
+		.wheel-frame {
+			position: relative;
+			display: grid;
+			width: 380px;
+			height: 380px;
+			place-items: center;
+		}
+
+		.wheel {
+			width: 332px;
+			aspect-ratio: 1;
+			border: 2px solid #111111;
+			border-radius: 50%;
+			background: conic-gradient(
+				#FFFFFF 0deg 22.5deg,
+				#EEEEEE 22.5deg 45deg,
+				#DDDDDD 45deg 67.5deg,
+				#CCCCCC 67.5deg 90deg,
+				#BBBBBB 90deg 112.5deg,
+				#AAAAAA 112.5deg 135deg,
+				#999999 135deg 157.5deg,
+				#888888 157.5deg 180deg,
+				#777777 180deg 202.5deg,
+				#666666 202.5deg 225deg,
+				#555555 225deg 247.5deg,
+				#444444 247.5deg 270deg,
+				#333333 270deg 292.5deg,
+				#222222 292.5deg 315deg,
+				#111111 315deg 337.5deg,
+				#000000 337.5deg 360deg
+			);
+			box-shadow: 6px 6px 0 #888888;
+			transform: rotate(0deg);
+			transition: transform 220ms ease-out;
+			will-change: transform;
+		}
+
+		.pointer {
+			position: absolute;
+			z-index: 1;
+			top: 14px;
+			left: 50%;
+			width: 0;
+			height: 0;
+			border-top: 24px solid #111111;
+			border-right: 14px solid transparent;
+			border-left: 14px solid transparent;
+			transform: translateX(-50%);
+		}
+
+		.hub {
+			position: absolute;
+			z-index: 1;
+			width: 48px;
+			aspect-ratio: 1;
+			border: 2px solid #111111;
+			border-radius: 50%;
+			background: #FFFFFF;
+			box-shadow: 3px 3px 0 #666666;
+		}
+
+		.footer {
+			border-top: 1px solid var(--rule);
+		}
+
+		.footer-label {
+			line-height: 1.8;
+		}
+
+		.toggle {
+			min-width: 104px;
+			padding: 10px 12px;
+			border: 1px solid var(--ink);
+			border-radius: 0;
+			background: var(--paper);
+			color: var(--ink);
+			cursor: pointer;
+			font-family: "Courier New", monospace;
+			font-size: 11px;
+		}
+
+		.toggle:hover,
+		.toggle:focus-visible {
+			background: var(--ink);
+			color: var(--paper);
+		}
+
+		.toggle:focus-visible {
+			outline: 2px solid #666666;
+			outline-offset: 3px;
+		}
+
+		@media (max-width: 420px) {
+			.screen {
+				grid-template-rows: 64px 1fr 72px;
+			}
+
+			.masthead,
+			.footer {
+				margin-right: 22px;
+				margin-left: 22px;
+			}
+
+			.wheel-frame {
+				transform: scale(.82);
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.wheel {
+				transition: none;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="screen" aria-label="Roleta de dezesseis tons de cinza">
+		<header class="masthead">
+			<div class="brand">ESTUDO Nº 02</div>
+			<div class="edition">ROULETA DE CINZAS</div>
+		</header>
+
+		<section class="scene" aria-label="Roleta com dezesseis fatias em tons de cinza">
+			<div class="wheel-frame">
+				<div class="wheel" id="wheel" role="img" aria-label="Roleta com dezesseis setores, do branco ao preto"></div>
+				<div class="pointer" aria-hidden="true"></div>
+				<div class="hub" aria-hidden="true"></div>
+			</div>
+		</section>
+
+		<footer class="footer">
+			<div class="footer-label">600 × 800 PX<br>167 PPI · 16 TONS</div>
+			<button class="toggle" id="toggle" type="button" aria-pressed="false">PAUSAR</button>
+		</footer>
+	</main>
+
+	<script>
+		const wheel = document.querySelector("#wheel");
+		const toggle = document.querySelector("#toggle");
+		const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+		let rotation = 0;
+		let timer;
+
+		function advanceWheel() {
+			rotation += 22.5;
+			wheel.style.transform = `rotate(${rotation}deg)`;
+		}
+
+		function startAnimation() {
+			if (!reducedMotion.matches && !timer) {
+				timer = window.setInterval(advanceWheel, 1000);
+			}
+		}
+
+		function stopAnimation() {
+			window.clearInterval(timer);
+			timer = undefined;
+		}
+
+		toggle.addEventListener("click", () => {
+			const isPaused = toggle.getAttribute("aria-pressed") === "true";
+			toggle.setAttribute("aria-pressed", String(!isPaused));
+			toggle.textContent = isPaused ? "PAUSAR" : "RETOMAR";
+			isPaused ? startAnimation() : stopAnimation();
+		});
+
+		reducedMotion.addEventListener("change", () => {
+			reducedMotion.matches ? stopAnimation() : startAnimation();
+		});
+
+		startAnimation();
+	</script>
+</body>
+</html>

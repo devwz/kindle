@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=600, initial-scale=1">
+	<meta name="theme-color" content="#FFFFFF">
+	<meta name="description" content="Minijogo de gerenciamento de uma lanchonete noturna em pixel art monocromática.">
+	<title>Noite de ramen | Kindle</title>
+	<style>
+		:root {
+			color-scheme: light;
+			--paper: #FFFFFF;
+			--ink: #111111;
+			--muted: #666666;
+			--rule: #CCCCCC;
+			--soft: #EEEEEE;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			width: 100%;
+			min-height: 100%;
+			margin: 0;
+		}
+
+		body {
+			display: grid;
+			min-height: 100vh;
+			place-items: center;
+			overflow: auto;
+			background: #DDDDDD;
+			color: var(--ink);
+			font-family: "Courier New", monospace;
+		}
+
+		.screen {
+			display: grid;
+			grid-template-rows: 62px 1fr 48px;
+			width: min(600px, 100vw);
+			aspect-ratio: 3 / 4;
+			overflow: hidden;
+			background: var(--paper);
+			box-shadow: 8px 8px 0 #888888;
+		}
+
+		.masthead,
+		.footer {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin: 0 28px;
+		}
+
+		.masthead {
+			border-bottom: 2px solid var(--ink);
+		}
+
+		.brand {
+			font-size: 15px;
+			font-weight: bold;
+			letter-spacing: 0;
+		}
+
+		.chapter,
+		.footer-label {
+			color: var(--muted);
+			font-size: 11px;
+			letter-spacing: 0;
+		}
+
+		.game {
+			display: grid;
+			min-height: 0;
+			grid-template-rows: 30px 220px auto 68px 1fr;
+			gap: 10px;
+			padding: 12px 28px 10px;
+		}
+
+		.status-line {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid var(--rule);
+			font-size: 12px;
+			font-weight: bold;
+		}
+
+		#night-label {
+			font-size: 14px;
+		}
+
+		.art-frame {
+			position: relative;
+			min-height: 0;
+			overflow: hidden;
+			border: 3px solid var(--ink);
+			background: var(--soft);
+			box-shadow: 4px 4px 0 #888888;
+		}
+
+		#shop-art {
+			display: block;
+			width: 100%;
+			height: 100%;
+			image-rendering: pixelated;
+		}
+
+		.dialogue {
+			position: relative;
+			min-height: 66px;
+			padding: 11px 14px;
+			border: 2px solid var(--ink);
+			background: var(--paper);
+			box-shadow: 3px 3px 0 #666666;
+			font-family: Georgia, "Times New Roman", serif;
+			font-size: 16px;
+			line-height: 1.35;
+		}
+
+		.dialogue::before {
+			position: absolute;
+			top: -8px;
+			left: 24px;
+			width: 12px;
+			height: 12px;
+			border-top: 2px solid var(--ink);
+			border-left: 2px solid var(--ink);
+			background: var(--paper);
+			content: "";
+			transform: rotate(45deg);
+		}
+
+		.metrics {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			border-top: 2px solid var(--ink);
+			border-bottom: 2px solid var(--ink);
+		}
+
+		.metric {
+			display: grid;
+			align-content: center;
+			gap: 4px;
+			padding: 0 8px;
+			border-right: 1px solid var(--rule);
+		}
+
+		.metric:last-child {
+			border-right: 0;
+		}
+
+		.metric-label {
+			color: var(--muted);
+			font-size: 10px;
+			font-weight: bold;
+		}
+
+		.metric-value {
+			font-size: 18px;
+			font-weight: bold;
+		}
+
+		.actions {
+			align-content: stretch;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			grid-auto-rows: minmax(54px, 1fr);
+			gap: 9px;
+			padding-top: 2px;
+		}
+
+		.action-button {
+			display: grid;
+			min-height: 48px;
+			padding: 8px 10px;
+			place-content: center;
+			border: 2px solid var(--ink);
+			border-radius: 0;
+			background: var(--paper);
+			box-shadow: 3px 3px 0 #666666;
+			color: var(--ink);
+			cursor: pointer;
+			font-family: inherit;
+			font-size: 11px;
+			font-weight: bold;
+			text-align: center;
+		}
+
+		.action-button:hover:not(:disabled),
+		.action-button:focus-visible {
+			background: var(--ink);
+			color: var(--paper);
+		}
+
+		.action-button:focus-visible {
+			outline: 2px solid #666666;
+			outline-offset: 3px;
+		}
+
+		.action-button:disabled {
+			background: #DDDDDD;
+			box-shadow: none;
+			color: #666666;
+			cursor: not-allowed;
+		}
+
+		.close-button,
+		.restart-button {
+			grid-column: 1 / -1;
+			text-align: center;
+		}
+
+		.restart-button[hidden] {
+			display: none;
+		}
+
+		.footer {
+			border-top: 1px solid var(--rule);
+		}
+
+		.footer-label {
+			font-size: 10px;
+		}
+
+		@media (max-width: 420px) {
+			.masthead,
+			.footer {
+				margin-right: 20px;
+				margin-left: 20px;
+			}
+
+			.game {
+				padding-right: 20px;
+				padding-left: 20px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="screen" aria-label="Minijogo de gerenciamento Noite de ramen">
+		<header class="masthead">
+			<div class="brand">NOITE DE RAMEN</div>
+			<div class="chapter">MANGÁ MANAGER · 01</div>
+		</header>
+
+		<section class="game" aria-label="Gerencie a lanchonete por cinco noites">
+			<div class="status-line">
+				<span id="night-label">NOITE 1 / 5</span>
+				<span>META: 40 MOEDAS + 6 FÃS</span>
+			</div>
+
+			<div class="art-frame">
+				<canvas id="shop-art" width="240" height="92" role="img" aria-label="Lanchonete de ramen em pixel art, com uma cozinheira e um cliente"></canvas>
+			</div>
+
+			<div class="dialogue" id="dialogue" role="status" aria-live="polite">"Um ramen bem quente, por favor!"</div>
+
+			<div class="metrics" aria-label="Indicadores da lanchonete">
+				<div class="metric">
+					<span class="metric-label">MOEDAS</span>
+					<span class="metric-value" id="coins">12</span>
+				</div>
+				<div class="metric">
+					<span class="metric-label">PORÇÕES</span>
+					<span class="metric-value" id="stock">2</span>
+				</div>
+				<div class="metric">
+					<span class="metric-label">FÃS</span>
+					<span class="metric-value" id="fans">0 / 6</span>
+				</div>
+				<div class="metric">
+					<span class="metric-label">FILA</span>
+					<span class="metric-value" id="waiting">2</span>
+				</div>
+			</div>
+
+			<div class="actions">
+				<button class="action-button" id="serve-button" type="button">SERVIR RAMEN<br>+6 MOEDAS</button>
+				<button class="action-button" id="restock-button" type="button">REPOR 2 PORÇÕES<br>−4 MOEDAS</button>
+				<button class="action-button close-button" id="close-button" type="button">FECHAR A NOITE</button>
+				<button class="action-button restart-button" id="restart-button" type="button" hidden>JOGAR DE NOVO</button>
+			</div>
+		</section>
+
+		<footer class="footer">
+			<div class="footer-label">600 × 800 PX · 167 PPI</div>
+			<div class="footer-label">16 TONS DE CINZA</div>
+		</footer>
+	</main>
+
+	<script>
+		const lastNight = 5;
+		const state = {
+			night: 1,
+			coins: 12,
+			stock: 2,
+			fans: 0,
+			waiting: 2,
+			finished: false
+		};
+
+		const elements = {
+			night: document.querySelector("#night-label"),
+			coins: document.querySelector("#coins"),
+			stock: document.querySelector("#stock"),
+			fans: document.querySelector("#fans"),
+			waiting: document.querySelector("#waiting"),
+			dialogue: document.querySelector("#dialogue"),
+			serve: document.querySelector("#serve-button"),
+			restock: document.querySelector("#restock-button"),
+			close: document.querySelector("#close-button"),
+			restart: document.querySelector("#restart-button")
+		};
+
+		function render() {
+			elements.night.textContent = `NOITE ${state.night} / ${lastNight}`;
+			elements.coins.textContent = state.coins;
+			elements.stock.textContent = state.stock;
+			elements.fans.textContent = `${state.fans} / 6`;
+			elements.waiting.textContent = state.waiting;
+			elements.serve.disabled = state.finished || state.waiting === 0 || state.stock === 0;
+			elements.restock.disabled = state.finished || state.coins < 4;
+			elements.close.disabled = state.finished;
+			elements.restart.hidden = !state.finished;
+		}
+
+		function serveRamen() {
+			if (elements.serve.disabled) return;
+			playArtAction("serve");
+			state.stock -= 1;
+			state.coins += 6;
+			state.fans = Math.min(10, state.fans + 1);
+			state.waiting -= 1;
+			elements.dialogue.textContent = state.waiting > 0
+				? `"Delícia! Mais ${state.waiting} pedido(s) esperando."`
+				: '"Estava perfeito! A fila acabou por hoje."';
+			render();
+		}
+
+		function restock() {
+			if (elements.restock.disabled) return;
+			playArtAction("restock");
+			state.coins -= 4;
+			state.stock += 2;
+			elements.dialogue.textContent = 'Estoque reposto: +2 porções. O aroma chama mais clientes!';
+			render();
+		}
+
+		function closeNight() {
+			if (state.finished) return;
+
+			if (state.waiting === 0) {
+				state.fans = Math.min(10, state.fans + 1);
+			} else {
+				state.fans = Math.max(0, state.fans - 1);
+			}
+
+			if (state.night === lastNight) {
+				state.finished = true;
+				const won = state.coins >= 40 && state.fans >= 6;
+				elements.dialogue.textContent = won
+					? 'FIM! Sua lanchonete virou lenda do bairro. Que história!'
+					: 'FIM! A noite foi longa. Tente outra estratégia no próximo capítulo.';
+				render();
+				return;
+			}
+
+			state.night += 1;
+			state.waiting = state.night % 2 === 0 ? 3 : 2;
+			elements.dialogue.textContent = state.waiting === 3
+				? '"Ouvi dizer que seu ramen é incrível!" Chegaram 3 pedidos.'
+				: 'Uma nova noite começa. 2 pedidos aguardam no balcão.';
+			render();
+		}
+
+		function restartGame() {
+			state.night = 1;
+			state.coins = 12;
+			state.stock = 2;
+			state.fans = 0;
+			state.waiting = 2;
+			state.finished = false;
+			elements.dialogue.textContent = '"Um ramen bem quente, por favor!"';
+			render();
+		}
+
+		elements.serve.addEventListener("click", serveRamen);
+		elements.restock.addEventListener("click", restock);
+		elements.close.addEventListener("click", closeNight);
+		elements.restart.addEventListener("click", restartGame);
+		render();
+
+		const canvas = document.querySelector("#shop-art");
+		const context = canvas.getContext("2d");
+
+		function pixel(x, y, width, height, color) {
+			context.fillStyle = color;
+			context.fillRect(x, y, width, height);
+		}
+
+		const pixelGlyphs = {
+			A: ["010", "101", "111", "101", "101"],
+			E: ["111", "100", "110", "100", "111"],
+			M: ["101", "111", "111", "101", "101"],
+			N: ["101", "111", "111", "111", "101"],
+			R: ["110", "101", "110", "101", "101"],
+			U: ["101", "101", "101", "101", "111"]
+		};
+
+		function pixelText(text, x, y, color) {
+			[...text].forEach((letter, letterIndex) => {
+				const glyph = pixelGlyphs[letter];
+				glyph.forEach((row, rowIndex) => {
+					[...row].forEach((on, columnIndex) => {
+						if (on === "1") pixel(x + letterIndex * 4 + columnIndex, y + rowIndex, 1, 1, color);
+					});
+				});
+			});
+		}
+
+		function outline(x, y, width, height, color = "#111111") {
+			context.strokeStyle = color;
+			context.lineWidth = 2;
+			context.strokeRect(x, y, width, height);
+		}
+
+		let artAction = "idle";
+		let artActionStarted = 0;
+		let artFrame = 0;
+
+		function playArtAction(action) {
+			artAction = action;
+			artActionStarted = performance.now();
+			if (!artFrame) artFrame = requestAnimationFrame(animateArtAction);
+		}
+
+		function animateArtAction(time) {
+			const progress = Math.min((time - artActionStarted) / 650, 1);
+			drawArt(artAction, progress);
+			if (progress < 1) {
+				artFrame = requestAnimationFrame(animateArtAction);
+			} else {
+				drawArt();
+				artFrame = 0;
+			}
+		}
+
+		function drawArt(action = "idle", progress = 0) {
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			pixel(0, 0, 240, 92, "#EEEEEE");
+
+			for (let y = 3; y < 27; y += 5) {
+				for (let x = 146; x < 237; x += 5) pixel(x, y, 1, 1, "#AAAAAA");
+			}
+
+			pixel(18, 9, 17, 2, "#BBBBBB");
+			pixel(8, 15, 35, 2, "#CCCCCC");
+			pixel(34, 5, 23, 2, "#BBBBBB");
+			pixel(193, 5, 18, 8, "#FFFFFF");
+			pixel(189, 9, 26, 8, "#FFFFFF");
+			pixel(193, 15, 18, 4, "#FFFFFF");
+			pixel(199, 5, 4, 2, "#EEEEEE");
+			pixel(75, 12, 2, 2, "#666666");
+			pixel(91, 6, 2, 2, "#666666");
+			pixel(165, 16, 3, 3, "#666666");
+
+			pixel(14, 27, 212, 59, "#CCCCCC");
+			outline(14, 27, 212, 59);
+			pixel(18, 19, 204, 14, "#111111");
+			for (let index = 0; index < 8; index += 1) {
+				const curtainColor = index % 2 === 0 ? "#FFFFFF" : "#999999";
+				pixel(20 + index * 25, 20, 13, 11, curtainColor);
+				pixel(22 + index * 25, 31, 9, 5, curtainColor);
+			}
+
+			pixel(87, 5, 66, 12, "#FFFFFF");
+			outline(87, 5, 66, 12);
+			pixelText("RAMEN", 110, 8, "#111111");
+
+			pixel(23, 37, 45, 28, "#EEEEEE");
+			outline(23, 37, 45, 28);
+			pixel(26, 40, 39, 7, "#111111");
+			pixelText("MENU", 36, 41, "#FFFFFF");
+			pixel(29, 51, 14, 8, "#BBBBBB");
+			pixel(32, 49, 8, 2, "#111111");
+			pixel(30, 58, 12, 2, "#111111");
+			pixel(48, 51, 14, 2, "#666666");
+			pixel(48, 56, 10, 2, "#888888");
+			pixel(48, 61, 12, 2, "#AAAAAA");
+
+			pixel(73, 38, 135, 23, "#BBBBBB");
+			outline(73, 38, 135, 23);
+			pixel(79, 43, 18, 13, "#EEEEEE");
+			pixel(81, 41, 14, 2, "#111111");
+			pixel(81, 56, 14, 2, "#111111");
+			pixel(82, 47, 12, 7, "#FFFFFF");
+			pixel(85, 45, 6, 2, "#666666");
+			pixel(108, 43, 16, 15, "#EEEEEE");
+			pixel(110, 40, 12, 3, "#111111");
+			pixel(111, 58, 12, 2, "#111111");
+			pixel(135, 42, 17, 16, "#EEEEEE");
+			pixel(137, 40, 13, 2, "#111111");
+			pixel(137, 58, 13, 2, "#111111");
+
+			pixel(17, 19, 12, 13, "#777777");
+			outline(17, 19, 12, 13);
+			pixel(20, 22, 6, 7, "#EEEEEE");
+			pixel(20, 24, 6, 2, "#111111");
+			pixel(211, 19, 12, 13, "#777777");
+			outline(211, 19, 12, 13);
+			pixel(214, 22, 6, 7, "#EEEEEE");
+			pixel(214, 24, 6, 2, "#111111");
+
+			const bounce = action === "serve" ? Math.round(Math.sin(progress * Math.PI) * 4) : 0;
+			const reach = action === "restock" ? Math.round(Math.sin(progress * Math.PI) * 7) : 0;
+			const cookY = 35 - bounce - reach;
+
+			pixel(112, cookY + 1, 22, 11, "#111111");
+			pixel(109, cookY + 5, 8, 5, "#111111");
+			pixel(128, cookY + 4, 8, 5, "#111111");
+			pixel(115, cookY, 15, 4, "#FFFFFF");
+			pixel(113, cookY + 5, 22, 19, "#FFFFFF");
+			outline(113, cookY + 5, 22, 19);
+			pixel(117, cookY + 11, 3, 3, "#111111");
+			pixel(129, cookY + 11, 3, 3, "#111111");
+			pixel(120, cookY + 18, 8, 2, "#666666");
+			pixel(110, cookY + 10, 3, 5, "#BBBBBB");
+			pixel(135, cookY + 10, 3, 5, "#BBBBBB");
+			pixel(107, cookY + 25, 35, 19, "#777777");
+			outline(107, cookY + 25, 35, 19);
+			pixel(118, cookY + 26, 13, 8, "#FFFFFF");
+			pixel(122, cookY + 33, 5, 9, "#FFFFFF");
+			pixel(114, cookY + 41, 8, 3, "#111111");
+			pixel(129, cookY + 41, 8, 3, "#111111");
+
+			if (action === "restock") {
+				pixel(139, cookY + 29 - reach, 12, 4, "#FFFFFF");
+				pixel(148, cookY + 22 - reach, 4, 10, "#FFFFFF");
+				pixel(144, cookY + 19 - reach, 10, 4, "#111111");
+			} else {
+				pixel(138, cookY + 29, 12, 4, "#FFFFFF");
+				pixel(147, cookY + 28, 4, 9, "#FFFFFF");
+				pixel(149, cookY + 34, 7, 3, "#111111");
+			}
+
+			const customerBounce = action === "serve" ? -bounce : 0;
+			const customerY = 40 + customerBounce;
+			pixel(175, customerY, 22, 13, "#111111");
+			pixel(173, customerY + 5, 7, 5, "#111111");
+			pixel(178, customerY + 6, 18, 18, "#FFFFFF");
+			outline(178, customerY + 6, 18, 18);
+			pixel(181, customerY + 12, 3, 3, "#111111");
+			pixel(190, customerY + 12, 3, 3, "#111111");
+			pixel(184, customerY + 19, 8, 2, "#666666");
+			pixel(175, customerY + 25, 25, 17, "#555555");
+			outline(175, customerY + 25, 25, 17);
+			pixel(184, customerY + 26, 8, 6, "#EEEEEE");
+
+			pixel(76, 69, 156, 14, "#555555");
+			outline(76, 69, 156, 14);
+			pixel(79, 72, 150, 2, "#EEEEEE");
+			pixel(79, 80, 150, 2, "#111111");
+
+			pixel(91, 63, 24, 5, "#111111");
+			pixel(94, 58, 18, 7, "#FFFFFF");
+			pixel(96, 56, 14, 3, "#111111");
+			pixel(97, 60, 12, 2, "#BBBBBB");
+			pixel(99, 62, 3, 2, "#111111");
+			pixel(106, 61, 3, 2, "#111111");
+			pixel(117, 56, 2, 7, "#111111");
+			pixel(122, 53, 2, 9, "#111111");
+
+			if (action === "serve" && progress < 0.8) {
+				pixel(101, cookY - 5, 2, 5, "#111111");
+				pixel(105, cookY - 8, 2, 5, "#666666");
+				pixel(160, customerY + 2, 2, 5, "#111111");
+				pixel(164, customerY - 1, 2, 5, "#666666");
+			}
+		}
+
+		drawArt();
+	</script>
+</body>
+</html>

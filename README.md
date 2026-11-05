@@ -22,3 +22,18 @@ Kindle 10 gen 2019 specs
     - #222222
     - #111111
     - #000000
+
+## Experiências
+
+As páginas publicadas estão disponíveis em [devwz.github.io/kindle](https://devwz.github.io/kindle/):
+
+- [Cubo em movimento](https://devwz.github.io/kindle/)
+- [Ateliê de pixels](https://devwz.github.io/kindle/atelie.html)
+- [Dispositivo](https://devwz.github.io/kindle/dispositivo.html)
+- [O Farol de Névoa](https://devwz.github.io/kindle/farol.html)
+- [Noite de ramen](https://devwz.github.io/kindle/jogo.html)
+- [Roleta de cinzas](https://devwz.github.io/kindle/roleta.html)
+- [Jardim lunar em WebGL](https://devwz.github.io/kindle/webgl.html)
+- [Catálogo em PDF](https://devwz.github.io/kindle/experiencias.html.pdf)
+
+O GitHub Actions publica o conteúdo deste repositório no GitHub Pages a cada atualização do branch `development`.

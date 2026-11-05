@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=600, initial-scale=1">
+	<meta name="theme-color" content="#FFFFFF">
+	<meta name="description" content="Ateliê local de pixel art com 16 tons de cinza para uma tela Kindle de 600 por 800 pixels.">
+	<title>Ateliê de pixels | Kindle</title>
+	<style>
+		:root {
+			color-scheme: light;
+			--paper: #FFFFFF;
+			--ink: #111111;
+			--muted: #666666;
+			--rule: #CCCCCC;
+			--soft: #EEEEEE;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			width: 100%;
+			min-height: 100%;
+			margin: 0;
+		}
+
+		body {
+			display: grid;
+			min-height: 100vh;
+			place-items: center;
+			overflow: auto;
+			background: #DDDDDD;
+			color: var(--ink);
+			font-family: "Courier New", monospace;
+		}
+
+		.screen {
+			display: grid;
+			grid-template-rows: 62px 1fr 48px;
+			width: min(600px, 100vw);
+			aspect-ratio: 3 / 4;
+			overflow: hidden;
+			background: var(--paper);
+			box-shadow: 8px 8px 0 #888888;
+		}
+
+		.masthead,
+		.footer {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin: 0 28px;
+		}
+
+		.masthead {
+			border-bottom: 2px solid var(--ink);
+		}
+
+		.brand {
+			font-size: 15px;
+			font-weight: bold;
+			letter-spacing: 0;
+		}
+
+		.edition,
+		.footer-label {
+			color: var(--muted);
+			font-size: 10px;
+			letter-spacing: 0;
+		}
+
+		.editor {
+			display: grid;
+			min-height: 0;
+			grid-template-rows: 28px 76px minmax(0, 1fr) 44px 16px;
+			gap: 8px;
+			padding: 12px 24px 10px;
+		}
+
+		.editor-heading {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+			border-bottom: 1px solid var(--rule);
+			font-size: 10px;
+			font-weight: bold;
+		}
+
+		#message {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.brushes {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			white-space: nowrap;
+		}
+
+		.brush-label {
+			margin-right: 3px;
+			color: var(--muted);
+		}
+
+		.brush-size {
+			width: 28px;
+			height: 24px;
+			padding: 0;
+			border: 1px solid var(--ink);
+			border-radius: 0;
+			background: var(--paper);
+			color: var(--ink);
+			cursor: pointer;
+			font: inherit;
+			font-size: 10px;
+		}
+
+		.brush-size[aria-pressed="true"] {
+			background: var(--ink);
+			color: var(--paper);
+		}
+
+		.palette-panel {
+			display: grid;
+			grid-template-rows: 14px 1fr;
+			gap: 5px;
+		}
+
+		.palette-heading {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 9px;
+			font-weight: bold;
+		}
+
+		#selected-color {
+			color: var(--muted);
+		}
+
+		.palette {
+			display: grid;
+			grid-template-columns: repeat(8, 1fr);
+			grid-template-rows: repeat(2, 25px);
+			gap: 4px;
+		}
+
+		.swatch {
+			width: 100%;
+			padding: 0;
+			border: 1px solid #111111;
+			border-radius: 0;
+			cursor: pointer;
+		}
+
+		.swatch[aria-pressed="true"] {
+			outline: 3px solid #111111;
+			outline-offset: 1px;
+		}
+
+		.swatch:focus-visible,
+		.brush-size:focus-visible,
+		.tool-button:focus-visible {
+			outline: 2px solid #666666;
+			outline-offset: 3px;
+		}
+
+		.board-area {
+			display: grid;
+			min-height: 0;
+			place-items: center;
+		}
+
+		#pixel-board {
+			display: block;
+			width: min(100%, 440px);
+			max-height: 100%;
+			aspect-ratio: 1;
+			border: 3px solid var(--ink);
+			background: var(--paper);
+			box-shadow: 5px 5px 0 #888888;
+			image-rendering: pixelated;
+			touch-action: none;
+			cursor: crosshair;
+		}
+
+		.tools {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 8px;
+		}
+
+		.tool-button {
+			min-width: 0;
+			border: 2px solid var(--ink);
+			border-radius: 0;
+			background: var(--paper);
+			box-shadow: 3px 3px 0 #666666;
+			color: var(--ink);
+			cursor: pointer;
+			font: inherit;
+			font-size: 10px;
+			font-weight: bold;
+		}
+
+		.tool-button:hover:not(:disabled) {
+			background: var(--ink);
+			color: var(--paper);
+		}
+
+		.tool-button:disabled {
+			background: #DDDDDD;
+			box-shadow: none;
+			color: #666666;
+			cursor: not-allowed;
+		}
+
+		.canvas-note {
+			align-self: center;
+			color: var(--muted);
+			font-size: 9px;
+			text-align: center;
+		}
+
+		.footer {
+			border-top: 1px solid var(--rule);
+		}
+
+		@media (max-width: 420px) {
+			.masthead,
+			.footer {
+				margin-right: 20px;
+				margin-left: 20px;
+			}
+
+			.editor {
+				padding-right: 20px;
+				padding-left: 20px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="screen" aria-label="Ateliê de pixel art em tons de cinza">
+		<header class="masthead">
+			<div class="brand">ATELIÊ DE PIXELS</div>
+			<div class="edition">ESTUDO Nº 05 · E-INK</div>
+		</header>
+
+		<section class="editor" aria-label="Editor de pixel art">
+			<div class="editor-heading">
+				<span id="message" role="status" aria-live="polite">TOQUE NA ARTE PARA DESENHAR</span>
+				<div class="brushes" aria-label="Tamanho do pincel">
+					<span class="brush-label">PINCEL</span>
+					<button class="brush-size" type="button" data-size="1" aria-pressed="true">1</button>
+					<button class="brush-size" type="button" data-size="2" aria-pressed="false">2</button>
+					<button class="brush-size" type="button" data-size="4" aria-pressed="false">4</button>
+				</div>
+			</div>
+
+			<div class="palette-panel">
+				<div class="palette-heading">
+					<span>PALETA · 16 CINZAS</span>
+					<span id="selected-color">#111111</span>
+				</div>
+				<div class="palette" id="palette" aria-label="Escolha um tom de cinza"></div>
+			</div>
+
+			<div class="board-area">
+				<canvas id="pixel-board" width="48" height="48" aria-label="Tela de desenho pixel a pixel" tabindex="0"></canvas>
+			</div>
+
+			<div class="tools">
+				<button class="tool-button" id="undo" type="button" disabled>DESFAZER</button>
+				<button class="tool-button" id="clear" type="button">LIMPAR</button>
+				<button class="tool-button" id="export" type="button">EXPORTAR PNG</button>
+			</div>
+
+			<div class="canvas-note">48 × 48 PIXELS · O DESENHO FICA NESTE DISPOSITIVO</div>
+		</section>
+
+		<footer class="footer">
+			<div class="footer-label">600 × 800 PX · 167 PPI</div>
+			<div class="footer-label">16 NÍVEIS DE CINZA</div>
+		</footer>
+	</main>
+
+	<script>
+		const shades = [
+			"#FFFFFF", "#EEEEEE", "#DDDDDD", "#CCCCCC",
+			"#BBBBBB", "#AAAAAA", "#999999", "#888888",
+			"#777777", "#666666", "#555555", "#444444",
+			"#333333", "#222222", "#111111", "#000000"
+		];
+		const canvas = document.querySelector("#pixel-board");
+		const context = canvas.getContext("2d");
+		const palette = document.querySelector("#palette");
+		const message = document.querySelector("#message");
+		const undoButton = document.querySelector("#undo");
+		const history = [];
+		let selectedShade = "#111111";
+		let brushSize = 1;
+		let isDrawing = false;
+
+		function makePalette() {
+			shades.forEach((shade, index) => {
+				const swatch = document.createElement("button");
+				swatch.className = "swatch";
+				swatch.type = "button";
+				swatch.style.backgroundColor = shade;
+				swatch.setAttribute("aria-label", `Tom ${index + 1}: ${shade}`);
+				swatch.setAttribute("aria-pressed", String(shade === selectedShade));
+				swatch.title = shade;
+				swatch.addEventListener("click", () => {
+					selectedShade = shade;
+					document.querySelector("#selected-color").textContent = shade;
+					palette.querySelectorAll(".swatch").forEach(button => {
+						button.setAttribute("aria-pressed", String(button === swatch));
+					});
+					message.textContent = `TOM SELECIONADO: ${shade}`;
+				});
+				palette.append(swatch);
+			});
+		}
+
+		function saveHistory() {
+			if (history.length === 30) history.shift();
+			history.push(context.getImageData(0, 0, canvas.width, canvas.height));
+			undoButton.disabled = false;
+		}
+
+		function paintAt(event) {
+			const bounds = canvas.getBoundingClientRect();
+			const pixelX = Math.floor((event.clientX - bounds.left) * canvas.width / bounds.width);
+			const pixelY = Math.floor((event.clientY - bounds.top) * canvas.height / bounds.height);
+			const startX = Math.max(0, Math.min(canvas.width - brushSize, pixelX - Math.floor(brushSize / 2)));
+			const startY = Math.max(0, Math.min(canvas.height - brushSize, pixelY - Math.floor(brushSize / 2)));
+			context.fillStyle = selectedShade;
+			context.fillRect(startX, startY, brushSize, brushSize);
+		}
+
+		function drawStarterArt() {
+			context.fillStyle = "#EEEEEE";
+			context.fillRect(0, 0, 48, 48);
+			context.fillStyle = "#FFFFFF";
+			context.fillRect(33, 5, 7, 7);
+			context.fillRect(31, 7, 11, 3);
+			context.fillRect(35, 3, 3, 11);
+
+			[[5, 7], [14, 4], [23, 10], [44, 16], [7, 18], [28, 4], [18, 14]].forEach(([x, y]) => {
+				context.fillStyle = "#666666";
+				context.fillRect(x, y, 1, 1);
+			});
+
+			for (let y = 16; y < 33; y += 1) {
+				const leftHalf = Math.floor((y - 16) * 0.9);
+				const leftStart = 2 + Math.max(0, 14 - leftHalf);
+				const leftEnd = 15 + leftHalf;
+				context.fillStyle = "#888888";
+				context.fillRect(leftStart, y, leftEnd - leftStart, 1);
+				const rightHalf = Math.floor((y - 18) * 1.15);
+				const rightStart = 28 - Math.max(0, 13 - rightHalf);
+				const rightEnd = 47 - rightHalf;
+				if (y >= 18 && rightEnd > rightStart) {
+					context.fillStyle = "#555555";
+					context.fillRect(rightStart, y, rightEnd - rightStart, 1);
+				}
+			}
+
+			context.fillStyle = "#FFFFFF";
+			context.fillRect(9, 23, 3, 2);
+			context.fillRect(12, 21, 3, 2);
+			context.fillRect(17, 26, 2, 2);
+			context.fillStyle = "#BBBBBB";
+			context.fillRect(0, 32, 48, 16);
+			context.fillStyle = "#999999";
+			for (let y = 34; y < 48; y += 4) {
+				context.fillRect(0, y, 48, 1);
+			}
+			context.fillStyle = "#777777";
+			context.fillRect(20, 35, 9, 2);
+			context.fillRect(22, 37, 5, 5);
+			context.fillStyle = "#111111";
+			context.fillRect(17, 37, 3, 1);
+			context.fillRect(29, 37, 3, 1);
+			context.fillRect(19, 42, 12, 1);
+			context.fillStyle = "#444444";
+			context.fillRect(8, 45, 10, 1);
+			context.fillRect(34, 44, 8, 1);
+		}
+
+		function undo() {
+			const previous = history.pop();
+			if (!previous) return;
+			context.putImageData(previous, 0, 0);
+			undoButton.disabled = history.length === 0;
+			message.textContent = "ÚLTIMA AÇÃO DESFEITA";
+		}
+
+		function clearBoard() {
+			saveHistory();
+			context.fillStyle = "#FFFFFF";
+			context.fillRect(0, 0, canvas.width, canvas.height);
+			message.textContent = "TELA LIMPA · DESENHE ALGO NOVO";
+		}
+
+		function exportPng() {
+			const output = document.createElement("canvas");
+			output.width = 480;
+			output.height = 480;
+			const outputContext = output.getContext("2d");
+			outputContext.imageSmoothingEnabled = false;
+			outputContext.drawImage(canvas, 0, 0, output.width, output.height);
+			const link = document.createElement("a");
+			link.download = "atelie-de-pixels.png";
+			link.href = output.toDataURL("image/png");
+			link.click();
+			message.textContent = "PNG 480 × 480 PRONTO";
+		}
+
+		palette.addEventListener("keydown", event => {
+			if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+			event.preventDefault();
+			const swatches = [...palette.querySelectorAll(".swatch")];
+			const current = swatches.indexOf(document.activeElement);
+			const direction = event.key === "ArrowRight" ? 1 : -1;
+			swatches[(current + direction + swatches.length) % swatches.length].focus();
+		});
+
+		document.querySelectorAll(".brush-size").forEach(button => {
+			button.addEventListener("click", () => {
+				brushSize = Number(button.dataset.size);
+				document.querySelectorAll(".brush-size").forEach(option => {
+					option.setAttribute("aria-pressed", String(option === button));
+				});
+				message.textContent = `PINCEL ${brushSize} × ${brushSize} PIXEL${brushSize > 1 ? "S" : ""}`;
+			});
+		});
+
+		canvas.addEventListener("pointerdown", event => {
+			event.preventDefault();
+			isDrawing = true;
+			saveHistory();
+			canvas.setPointerCapture(event.pointerId);
+			paintAt(event);
+			message.textContent = `PINTANDO COM ${selectedShade}`;
+		});
+		canvas.addEventListener("pointermove", event => {
+			if (isDrawing) paintAt(event);
+		});
+		canvas.addEventListener("pointerup", () => { isDrawing = false; });
+		canvas.addEventListener("pointercancel", () => { isDrawing = false; });
+		document.querySelector("#undo").addEventListener("click", undo);
+		document.querySelector("#clear").addEventListener("click", clearBoard);
+		document.querySelector("#export").addEventListener("click", exportPng);
+
+		makePalette();
+		drawStarterArt();
+	</script>
+</body>
+</html>
