@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=600, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#FFFFFF">
 	<meta name="description" content="Jardim lunar tridimensional em WebGL, com atualizações a cada segundo e 16 tons de cinza.">
 	<title>Jardim lunar | Kindle</title>
@@ -28,23 +28,22 @@
 		}
 
 		body {
-			display: grid;
+			display: block;
 			min-height: 100vh;
-			place-items: center;
 			overflow: auto;
-			background: #DDDDDD;
+			background: var(--paper);
 			color: var(--ink);
 			font-family: Georgia, "Times New Roman", serif;
 		}
 
 		.screen {
 			display: grid;
-			grid-template-rows: 68px 1fr 66px;
-			width: min(600px, 100vw);
-			aspect-ratio: 3 / 4;
-			overflow: hidden;
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-rows: auto minmax(min-content, 1fr) auto;
+			width: 100%;
+			min-height: 100vh;
+			overflow: visible;
 			background: var(--paper);
-			box-shadow: 8px 8px 0 #888888;
 		}
 
 		.masthead,
@@ -75,9 +74,9 @@
 		.stage {
 			display: grid;
 			min-height: 0;
-			grid-template-rows: 36px minmax(0, 1fr) 42px;
+			grid-template-rows: auto minmax(240px, 1fr) auto;
 			gap: 12px;
-			padding: 18px 28px 14px;
+			padding: 18px clamp(18px, 4vw, 48px) 14px;
 		}
 
 		.scene-meta {
@@ -95,6 +94,7 @@
 		.art-frame {
 			position: relative;
 			display: grid;
+			min-width: 0;
 			min-height: 0;
 			place-items: center;
 			overflow: hidden;
@@ -107,6 +107,9 @@
 			display: block;
 			width: 100%;
 			height: 100%;
+			min-width: 0;
+			min-height: 0;
+			aspect-ratio: 16 / 9;
 		}
 
 		#error {
@@ -167,10 +170,6 @@
 		}
 
 		@media (max-width: 420px) {
-			.screen {
-				grid-template-rows: 60px 1fr 58px;
-			}
-
 			.masthead,
 			.footer {
 				margin-right: 20px;
@@ -203,7 +202,7 @@
 				<span id="orbit-label" aria-live="polite">ÓRBITA 01 · MARÉ</span>
 			</div>
 			<div class="art-frame">
-				<canvas id="garden" width="544" height="510" aria-label="Planeta facetado, luas e anel em 3D"></canvas>
+				<canvas id="garden" aria-label="Planeta facetado, luas e anel em 3D"></canvas>
 				<p id="error" role="alert" hidden></p>
 			</div>
 			<div class="controls">
@@ -213,7 +212,7 @@
 		</section>
 
 		<footer class="footer">
-			<div class="footer-label">600 × 800 PX · 16 TONS<br>WEBGL · 1 ATUALIZAÇÃO/S</div>
+			<div class="footer-label">EXPERIÊNCIA RESPONSIVA · 16 TONS<br>WEBGL · 1 ATUALIZAÇÃO/S</div>
 			<button class="button" id="toggle" type="button" aria-pressed="false">PAUSAR</button>
 		</footer>
 	</main>
@@ -459,6 +458,13 @@
 			if (!gl) {
 				return;
 			}
+			const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+			const width = Math.max(1, Math.round(canvas.clientWidth * pixelRatio));
+			const height = Math.max(1, Math.round(canvas.clientHeight * pixelRatio));
+			if (canvas.width !== width || canvas.height !== height) {
+				canvas.width = width;
+				canvas.height = height;
+			}
 			gl.viewport(0, 0, canvas.width, canvas.height);
 			gl.clearColor(...shadeColor(1), 1);
 			gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -503,6 +509,7 @@
 
 		orbitButton.addEventListener("click", updateOrbit);
 		canvas.addEventListener("click", updateOrbit);
+		window.addEventListener("resize", drawScene);
 		toggleButton.addEventListener("click", () => {
 			const isPaused = toggleButton.getAttribute("aria-pressed") === "true";
 			toggleButton.setAttribute("aria-pressed", String(!isPaused));

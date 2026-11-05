@@ -2,9 +2,9 @@
 <html lang="pt-BR">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=600, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#FFFFFF">
-	<meta name="description" content="Ateliê local de pixel art com 16 tons de cinza para uma tela Kindle de 600 por 800 pixels.">
+	<meta name="description" content="Ateliê responsivo de pixel art local com 16 tons de cinza.">
 	<title>Ateliê de pixels | Kindle</title>
 	<style>
 		:root {
@@ -28,23 +28,22 @@
 		}
 
 		body {
-			display: grid;
+			display: block;
 			min-height: 100vh;
-			place-items: center;
 			overflow: auto;
-			background: #DDDDDD;
+			background: var(--paper);
 			color: var(--ink);
 			font-family: "Courier New", monospace;
 		}
 
 		.screen {
 			display: grid;
-			grid-template-rows: 62px 1fr 48px;
-			width: min(600px, 100vw);
-			aspect-ratio: 3 / 4;
-			overflow: hidden;
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-rows: auto minmax(min-content, 1fr) auto;
+			width: 100%;
+			min-height: 100vh;
+			overflow: visible;
 			background: var(--paper);
-			box-shadow: 8px 8px 0 #888888;
 		}
 
 		.masthead,
@@ -74,10 +73,16 @@
 
 		.editor {
 			display: grid;
+			grid-template-columns: minmax(0, 1fr);
+			min-width: 0;
 			min-height: 0;
 			grid-template-rows: 28px 76px minmax(0, 1fr) 44px 16px;
 			gap: 8px;
 			padding: 12px 24px 10px;
+		}
+
+		.editor > * {
+			min-width: 0;
 		}
 
 		.editor-heading {
@@ -179,7 +184,7 @@
 
 		#pixel-board {
 			display: block;
-			width: min(100%, 440px);
+			width: min(100%, 70vmin);
 			max-height: 100%;
 			aspect-ratio: 1;
 			border: 3px solid var(--ink);
@@ -286,7 +291,7 @@
 		</section>
 
 		<footer class="footer">
-			<div class="footer-label">600 × 800 PX · 167 PPI</div>
+			<div class="footer-label">TELA RESPONSIVA · 16 TONS</div>
 			<div class="footer-label">16 NÍVEIS DE CINZA</div>
 		</footer>
 	</main>

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=600, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#FFFFFF">
 	<meta name="description" content="Minijogo de gerenciamento de uma lanchonete noturna em pixel art monocromática.">
 	<title>Noite de ramen | Kindle</title>
@@ -28,23 +28,22 @@
 		}
 
 		body {
-			display: grid;
+			display: block;
 			min-height: 100vh;
-			place-items: center;
 			overflow: auto;
-			background: #DDDDDD;
+			background: var(--paper);
 			color: var(--ink);
 			font-family: "Courier New", monospace;
 		}
 
 		.screen {
 			display: grid;
-			grid-template-rows: 62px 1fr 48px;
-			width: min(600px, 100vw);
-			aspect-ratio: 3 / 4;
-			overflow: hidden;
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-rows: auto minmax(min-content, 1fr) auto;
+			width: 100%;
+			min-height: 100vh;
+			overflow: visible;
 			background: var(--paper);
-			box-shadow: 8px 8px 0 #888888;
 		}
 
 		.masthead,
@@ -75,7 +74,7 @@
 		.game {
 			display: grid;
 			min-height: 0;
-			grid-template-rows: 30px 220px auto 68px 1fr;
+			grid-template-rows: auto clamp(180px, 30vh, 320px) auto auto auto;
 			gap: 10px;
 			padding: 12px 28px 10px;
 		}
@@ -168,7 +167,7 @@
 			align-content: stretch;
 			display: grid;
 			grid-template-columns: 1fr 1fr;
-			grid-auto-rows: minmax(54px, 1fr);
+			grid-auto-rows: minmax(54px, auto);
 			gap: 9px;
 			padding-top: 2px;
 		}
@@ -287,7 +286,7 @@
 		</section>
 
 		<footer class="footer">
-			<div class="footer-label">600 × 800 PX · 167 PPI</div>
+			<div class="footer-label">JOGO RESPONSIVO · 16 TONS</div>
 			<div class="footer-label">16 TONS DE CINZA</div>
 		</footer>
 	</main>

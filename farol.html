@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=600, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#FFFFFF">
 	<meta name="description" content="História interativa curta, otimizada para leitura em tela Kindle.">
 	<title>O Farol de Névoa | Kindle</title>
@@ -28,23 +28,22 @@
 		}
 
 		body {
-			display: grid;
+			display: block;
 			min-height: 100vh;
-			place-items: center;
 			overflow: auto;
-			background: #DDDDDD;
+			background: var(--paper);
 			color: var(--ink);
 			font-family: Georgia, "Times New Roman", serif;
 		}
 
 		.screen {
 			display: grid;
-			grid-template-rows: 62px 1fr 50px;
-			width: min(600px, 100vw);
-			aspect-ratio: 3 / 4;
-			overflow: hidden;
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-rows: auto minmax(min-content, 1fr) auto;
+			width: 100%;
+			min-height: 100vh;
+			overflow: visible;
 			background: var(--paper);
-			box-shadow: 8px 8px 0 #888888;
 		}
 
 		.masthead,
@@ -76,7 +75,7 @@
 		.story {
 			display: grid;
 			min-height: 0;
-			grid-template-rows: 28px 190px auto 1fr;
+			grid-template-rows: auto clamp(180px, 32vh, 320px) auto auto;
 			gap: 14px;
 			padding: 16px 30px 14px;
 		}
@@ -134,7 +133,7 @@
 		.choices {
 			align-content: stretch;
 			display: grid;
-			grid-auto-rows: minmax(64px, 1fr);
+			grid-auto-rows: minmax(64px, auto);
 			gap: 10px;
 		}
 
@@ -252,7 +251,7 @@
 		</section>
 
 		<footer class="footer">
-			<div class="footer-label">600 × 800 PX · 167 PPI · 16 TONS</div>
+			<div class="footer-label">HISTÓRIA RESPONSIVA · 16 TONS</div>
 			<button class="restart" id="restart" type="button">RECOMEÇAR</button>
 		</footer>
 	</main>

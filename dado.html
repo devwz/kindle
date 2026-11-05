@@ -2,9 +2,9 @@
 <html lang="pt-BR">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=600, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#FFFFFF">
-	<meta name="description" content="Dado tridimensional giratório em 16 tons de cinza para uma tela Kindle de 600 por 800 pixels.">
+	<meta name="description" content="Dado tridimensional giratório em 16 tons de cinza.">
 	<title>Dado em movimento | Kindle</title>
 	<style>
 		:root {
@@ -28,11 +28,10 @@
 		}
 
 		body {
-			display: grid;
+			display: block;
 			min-height: 100vh;
-			place-items: center;
 			overflow: auto;
-			background: #DDDDDD;
+			background: var(--paper);
 			color: var(--ink);
 			font-family: Georgia, "Times New Roman", serif;
 		}
@@ -40,12 +39,12 @@
 		.screen {
 			position: relative;
 			display: grid;
-			grid-template-rows: 76px 1fr 76px;
-			width: min(600px, 100vw);
-			aspect-ratio: 3 / 4;
-			overflow: hidden;
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-rows: auto minmax(280px, 1fr) auto;
+			width: 100%;
+			min-height: 100vh;
+			overflow: visible;
 			background: var(--paper);
-			box-shadow: 8px 8px 0 #888888;
 		}
 
 		.masthead,
@@ -103,16 +102,16 @@
 
 		.cube-wrap {
 			display: grid;
-			width: 250px;
-			height: 250px;
+			width: min(250px, 80vmin);
+			aspect-ratio: 1;
 			place-items: center;
 			perspective: 760px;
 		}
 
 		.cube {
 			position: relative;
-			width: 164px;
-			height: 164px;
+			width: min(164px, 60vmin);
+			height: min(164px, 60vmin);
 			transform: rotateX(-24deg) rotateY(-34deg);
 			transform-style: preserve-3d;
 			transition: transform 900ms cubic-bezier(.2, .7, .2, 1);
@@ -122,8 +121,8 @@
 		.face {
 			position: absolute;
 			display: grid;
-			width: 164px;
-			height: 164px;
+			width: min(164px, 60vmin);
+			height: min(164px, 60vmin);
 			place-items: center;
 			border: 2px solid #111111;
 			backface-visibility: hidden;
@@ -131,46 +130,46 @@
 
 		.front {
 			background: #CCCCCC;
-			transform: translateZ(82px);
+			transform: translateZ(min(82px, 30vmin));
 		}
 
 		.back {
 			background: #777777;
-			transform: rotateY(180deg) translateZ(82px);
+			transform: rotateY(180deg) translateZ(min(82px, 30vmin));
 		}
 
 		.right {
 			background: #999999;
-			transform: rotateY(90deg) translateZ(82px);
+			transform: rotateY(90deg) translateZ(min(82px, 30vmin));
 		}
 
 		.left {
 			background: #BBBBBB;
-			transform: rotateY(-90deg) translateZ(82px);
+			transform: rotateY(-90deg) translateZ(min(82px, 30vmin));
 		}
 
 		.top {
 			background: #EEEEEE;
-			transform: rotateX(90deg) translateZ(82px);
+			transform: rotateX(90deg) translateZ(min(82px, 30vmin));
 		}
 
 		.bottom {
 			background: #555555;
-			transform: rotateX(-90deg) translateZ(82px);
+			transform: rotateX(-90deg) translateZ(min(82px, 30vmin));
 		}
 
 		.pips {
 			display: grid;
 			width: 100%;
 			height: 100%;
-			padding: 25px;
+			padding: min(25px, 9vmin);
 			grid-template-columns: repeat(3, 1fr);
 			grid-template-rows: repeat(3, 1fr);
 		}
 
 		.pip {
-			width: 15px;
-			height: 15px;
+			width: min(15px, 4vmin);
+			height: min(15px, 4vmin);
 			place-self: center;
 			border-radius: 50%;
 			background: #111111;
@@ -240,18 +239,10 @@
 		}
 
 		@media (max-width: 420px) {
-			.screen {
-				grid-template-rows: 64px 1fr 72px;
-			}
-
 			.masthead,
 			.footer {
 				margin-right: 22px;
 				margin-left: 22px;
-			}
-
-			.cube-wrap {
-				transform: scale(.82);
 			}
 		}
 
@@ -283,7 +274,7 @@
 		</section>
 
 		<footer class="footer">
-			<div class="footer-label">600 × 800 PX<br>167 PPI · 16 TONS</div>
+			<div class="footer-label">TELA RESPONSIVA<br>16 TONS DE CINZA</div>
 			<button class="toggle" id="toggle" type="button" aria-pressed="false">PAUSAR</button>
 		</footer>
 	</main>

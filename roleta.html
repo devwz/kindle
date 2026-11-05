@@ -2,9 +2,9 @@
 <html lang="pt-BR">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=600, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="theme-color" content="#FFFFFF">
-	<meta name="description" content="Roleta com 16 setores, um para cada tom de cinza da tela Kindle 600 por 800 pixels.">
+	<meta name="description" content="Roleta responsiva com 16 setores em tons de cinza.">
 	<title>Roleta de cinzas | Kindle</title>
 	<style>
 		:root {
@@ -28,11 +28,10 @@
 		}
 
 		body {
-			display: grid;
+			display: block;
 			min-height: 100vh;
-			place-items: center;
 			overflow: auto;
-			background: #DDDDDD;
+			background: var(--paper);
 			color: var(--ink);
 			font-family: Georgia, "Times New Roman", serif;
 		}
@@ -40,12 +39,12 @@
 		.screen {
 			position: relative;
 			display: grid;
-			grid-template-rows: 76px 1fr 76px;
-			width: min(600px, 100vw);
-			aspect-ratio: 3 / 4;
-			overflow: hidden;
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-rows: auto minmax(360px, 1fr) auto;
+			width: 100%;
+			min-height: 100vh;
+			overflow: visible;
 			background: var(--paper);
-			box-shadow: 8px 8px 0 #888888;
 		}
 
 		.masthead,
@@ -103,13 +102,15 @@
 		.wheel-frame {
 			position: relative;
 			display: grid;
-			width: 380px;
-			height: 380px;
+			width: min(92vw, 75vh, 520px);
+			aspect-ratio: 1;
 			place-items: center;
 		}
 
 		.wheel {
-			width: 332px;
+			width: calc(100% - 48px);
+			height: auto;
+			max-width: 460px;
 			aspect-ratio: 1;
 			border: 2px solid #111111;
 			border-radius: 50%;
@@ -193,18 +194,10 @@
 		}
 
 		@media (max-width: 420px) {
-			.screen {
-				grid-template-rows: 64px 1fr 72px;
-			}
-
 			.masthead,
 			.footer {
 				margin-right: 22px;
 				margin-left: 22px;
-			}
-
-			.wheel-frame {
-				transform: scale(.82);
 			}
 		}
 
@@ -231,7 +224,7 @@
 		</section>
 
 		<footer class="footer">
-			<div class="footer-label">600 × 800 PX<br>167 PPI · 16 TONS</div>
+			<div class="footer-label">TELA RESPONSIVA<br>16 TONS DE CINZA</div>
 			<button class="toggle" id="toggle" type="button" aria-pressed="false">PAUSAR</button>
 		</footer>
 	</main>

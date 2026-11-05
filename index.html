@@ -28,22 +28,21 @@
 		}
 
 		body {
-			display: grid;
+			display: block;
 			min-height: 100vh;
-			place-items: center;
-			background: #DDDDDD;
+			background: var(--paper);
 			color: var(--ink);
 			font-family: Georgia, "Times New Roman", serif;
 		}
 
 		.screen {
 			display: grid;
-			grid-template-rows: auto 1fr auto;
-			width: min(600px, 100vw);
-			min-height: min(800px, 100vh);
-			padding: 40px 42px 32px;
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-rows: auto minmax(min-content, 1fr) auto;
+			width: 100%;
+			min-height: 100vh;
+			padding: 40px clamp(22px, 5vw, 64px) 32px;
 			background: var(--paper);
-			box-shadow: 8px 8px 0 #888888;
 		}
 
 		.masthead,
@@ -180,7 +179,7 @@
 <body>
 	<main class="screen" aria-labelledby="page-title">
 		<header class="masthead">
-			<div class="brand">KINDLE · 600 × 800</div>
+			<div class="brand">KINDLE · 16 TONS</div>
 			<div class="edition">16 TONS DE CINZA</div>
 		</header>
 
