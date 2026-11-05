@@ -1,0 +1,24 @@
+Kindle 10 gen 2019 specs
+
+- Display: 6" glare-free touchscreen
+- Resolution: 600 x 800 pixels
+- Pixel Density: 167 ppi
+- Aspect Ratio: 3:4
+- E-book formats: AZW, AZW3, TXT, PDF, MOBI, PRC, HTML, DOC, DOCX, JPEG, GIF, PNG, BMP
+- Color scale: 16 shades of gray
+    - #FFFFFF
+    - #EEEEEE
+    - #DDDDDD
+    - #CCCCCC
+    - #BBBBBB
+    - #AAAAAA
+    - #999999
+    - #888888
+    - #777777
+    - #666666
+    - #555555
+    - #444444
+    - #333333
+    - #222222
+    - #111111
+    - #000000
